@@ -1,0 +1,61 @@
+.start__container
+{
+	padding: 1rem;
+	/* border: 2px solid red; */
+	height: 100%;
+	width: 100%;
+}
+.start__heading
+{
+	color: black;
+	font-size: 33px;
+	margin: 1rem;
+	font-weight: bolder;
+}
+.cube__img--container
+{
+	/* border: 2px solid red; */
+	width: 350px;
+	height: 450px;
+}
+.cube__intro--pic
+{
+	width: 100%;
+	/* height: 100%; */
+	animation: hovering 3s ease-in-out infinite;
+}
+@keyframes hovering
+{
+	from
+	{
+		transform: translateY(0px);
+	}
+	50%
+	{
+		transform: translateY(50px);
+	}
+	to
+	{
+		transform: translateY(0px);
+
+	}
+}
+
+.start__btn
+{
+	height: 40px;
+	width: 150px;
+	background-color: #F8437C;
+	border-color: transparent;
+	border-radius: 50px;
+	font-size: large;
+	font-weight: medium;
+	filter: drop-shadow(0px 10px 10px rgb(209, 209, 209));
+	transition: all 0.15s ease-in;
+}
+.start__btn:hover
+{
+	cursor: pointer;
+	background-color: rgb(255, 28, 100);
+	filter: drop-shadow(0px 10px 10px rgb(183, 183, 183));
+}
