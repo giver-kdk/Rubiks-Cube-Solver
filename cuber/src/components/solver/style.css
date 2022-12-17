@@ -10,9 +10,59 @@ body {
 .cube__container
 {
 	/* border: 2px solid red; */
-	height: 100vh;
-	width: 100vw;
+	height: 100%;
+	width: 100%;
 	/* transform: translateY(-500px); */
+}
+.step__count.active
+{
+	opacity: 1;
+}
+.step__count
+{
+	width: 160px;
+	height: 40px;
+	border-radius: 50px;
+	background-color: #D4EDDA;
+	border: 2px solid #C3E6CB;
+	color: black;
+	position: absolute;
+	top: 0.7rem;
+	left: 1rem;
+	font-size: 21px;
+	text-align: left;
+	opacity: 0;
+}
+.move__name
+{
+	/* border: 2px solid red; */
+	color: black;
+	position: absolute;
+	top: 1rem;
+	left: 50%;
+	transform: translateX(-50%);;
+	font-size: 27px;
+	font-weight: 600;
+}
+.moves__num
+{
+	color: black;
+	background-color: #D4EDDA;
+	border: 1px solid #C3E6CB;
+	width: 40%;
+	padding: 10px;
+	font-size: 19px;
+	position: absolute;
+	top: 3.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 5px;
+	font-weight: 500;
+	opacity: 0;
+}
+.moves__num.active
+{
+	opacity: 1;
 }
 .cube__container.solver__active
 {
@@ -42,7 +92,7 @@ body {
 }
 
 .scene {
-	/* border: 2px solid red; */
+	/* border: 2px solid blue; */
 	/* margin-top: 50vh; */
 	width: 100%;
 	height: 100%;
@@ -149,4 +199,45 @@ body {
 .cube>.piece>.element>.sticker.red {
 	background-color: #DF0500;
 	background-color: #cd2e19;
+}
+.next__move--btn, .repeat__btn
+{
+	height: 40px;
+	width: 150px;
+	background-color: #F8437C;
+	border-color: transparent;
+	border-radius: 50px;
+	font-size: large;
+	font-weight: medium;
+	filter: drop-shadow(0px 10px 10px rgb(209, 209, 209));
+	transition: all 0.15s ease-in;
+	position: absolute;
+	bottom: 2rem;
+	right: 3rem;
+}
+.repeat__btn
+{
+	background-color: #32b7c3c6;
+	right: 15rem;
+}
+.next__move--btn:hover, .repeat__btn:hover
+{
+	cursor: pointer;
+	background-color: rgb(255, 28, 100);
+	filter: drop-shadow(0px 10px 10px rgb(183, 183, 183));
+}
+.repeat__btn:hover
+{
+	background-color: #32B8C3;
+}
+.next__move--btn:disabled, .repeat__btn:disabled
+{
+	background-color: rgb(169, 169, 169);
+	transition: all 0.15s ease-in;
+}
+.next__move--btn:disabled:hover, .repeat__btn:disabled:hover
+{
+	cursor: default;
+	background-color: rgb(169, 169, 169);
+	filter: drop-shadow(0px 10px 10px rgb(209, 209, 209));
 }

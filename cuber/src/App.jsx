@@ -110,14 +110,14 @@ function App() {
 				}
 			});
 	}
-	function handleFaceInput()
-	{
-		console.log("Face Input Ran");
-		setPageVisibility([false, false, true, false, false]);
-	}
 	function handlePosition()
 	{
 		console.log("Position Ran");
+		setPageVisibility([false, false, true, false, false]);
+	}
+	function handleFaceInput()
+	{
+		console.log("Face Input Ran");
 		setPageVisibility([false, false, false, true, false]);
 	}
 	function handleSolver()
@@ -137,8 +137,8 @@ function App() {
 		<div className="App">
 			<div className="app__container">
 				{pageVisibility[0] && <Start handleClick={handleStart}/>}
-				{pageVisibility[1] && <FaceSet handleClick={handleFaceInput} handleChange={handleFaceSet} colors={inputFaceColors}/>}
-				{pageVisibility[2] && <Position handleClick={handlePosition} cubeColorState={inputFaceColors} setAlgo={(algo) => handleAlgoResult(algo)}/>}
+				{pageVisibility[1] && <Position handleClick={handlePosition} />}
+				{pageVisibility[2] && <FaceSet handleClick={handleFaceInput} handleChange={handleFaceSet} colors={inputFaceColors} setAlgo={(algo) => handleAlgoResult(algo)} cubeColorState={inputFaceColors}/>}
 				{pageVisibility[3] && <Solver handleClick={handleSolver} movesAlgo={algoResult}/>}
 			</div>
 		</div>

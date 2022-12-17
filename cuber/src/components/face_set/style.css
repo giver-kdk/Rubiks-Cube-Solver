@@ -46,14 +46,41 @@
 }
 .color__value--container li
 {
-	text-align: center;
+	text-align: left;
 	background-color: rgba(204, 204, 204, 0.641);
 	border-radius: 5px;
 	padding: 5px;
-	color: grey;
+	padding-left: 35px;
+	color: rgb(85, 85, 85);
 	list-style: none;
 	width: 150px;
 	margin: 3px;
+	border: 1px solid rgba(128, 128, 128, 0.453);
+}
+.color__value.green, .example__item.green
+{
+	background-color: #7ad01e74;
+
+}
+.color__value.red, .example__item.red
+{
+	background-color: #cd2d1874;
+}
+.color__value.white, .example__item.white
+{
+	background-color: #E8E8F0;
+}
+.color__value.yellow, .example__item.yellow
+{
+	background-color: #f0fd3d74;
+}
+.color__value.orange, .example__item.orange
+{
+	background-color: #d4690471;
+}
+.color__value.blue, .example__item.blue
+{
+	background-color: #4fa3df79;
 }
 .color__input
 {
@@ -87,8 +114,9 @@
 {
 	font-size: 15px;
 	list-style: none;
-	color: grey;
+	color: #2f2f31c6;
 	background-color: rgba(204, 204, 204, 0.641);
+	border: 1px solid rgba(128, 128, 128, 0.453);
 	margin: 3px;
 	margin-right: 3px;
 	border-radius: 5px;
@@ -96,15 +124,18 @@
 }
 .color__set--btn
 {
-	height: 30px;
-	width: 120px;
+	height: 40px;
+	width: 150px;
 	background-color: #F8437C;
 	border-color: transparent;
 	border-radius: 50px;
-	font-size: 15px;
+	font-size: large;
 	font-weight: medium;
 	filter: drop-shadow(0px 10px 10px rgb(209, 209, 209));
 	transition: all 0.15s ease-in;
+	position: absolute;
+	bottom: 2rem;
+	right: 3rem;
 }
 .color__set--btn:hover
 {

@@ -1,13 +1,17 @@
 import "./style.css";
 import React, { useState } from "react";
-import {useEffect} from "react"
+import { useEffect } from "react";
 import solver from "rubiks-cube-solver";
 
 // import { Helmet } from "react-helmet";
 
 function Solver(props) {
 	// Cube Solving Logic
-	let delay = 1000;
+	// Here, "i" is the factor for amount of time needed(Says how long we should wait)
+	let delay = 500,
+		i = 0;
+	let reverseIndex = 0,
+		forwardIndex = 0;
 	let solverStyle = "";
 	let [orientation, setOrientation] = useState({
 		front: 1,
@@ -17,6 +21,10 @@ function Solver(props) {
 		left: 5,
 		back: 0,
 	});
+	let [stepCount, setStepCount] = useState(0);
+	let [moveMessage, setMoveMessage] = useState(
+		"Syncing the cube state with yours...🪄"
+	);
 	// let w = "u", g = "f", r = "r", o = "l", b = "b", y = "d";
 	// let frontFace = [o, r, y, b, g, g, o, g, w].join("");
 	// let rightFace = [r, y, w, y, r, w, r, o, w].join("");
@@ -26,25 +34,23 @@ function Solver(props) {
 	// let backFace = [r, o, o, g, b, w, g, y, b].join("");
 
 	// let cubeState = [
-	// frontFace, 
-	// rightFace, 
+	// frontFace,
+	// rightFace,
 	// upperFace,
 	// downFace,
 	// leftFace,
 	// backFace
 	// ].join('');
-	
+
 	// let solveMoves = solver(cubeState).split(" ");
 	// console.log(solveMoves);
 	useEffect(() => {
-		let moveInstructions = [
-			[4, true],
-			[4, true],
-			[4, true],
-			[4, true],
-		];
 		// let scene = document.getElementById("scene");
 		console.log("Script Ran");
+		let movesNum = document.querySelector(".moves__num");
+		let stepCountBtn = document.querySelector(".step__count");
+		let repeatBtn = document.querySelector(".repeat__btn");
+		let nextBtn = document.querySelector(".next__move--btn");
 		// var colors = ['blue', 'green', 'yellow', 'white', 'orange', 'red'],
 		var colors = ["blue", "green", "white", "yellow", "red", "orange"],
 			pieces = document.getElementsByClassName("piece");
@@ -124,7 +130,7 @@ function Solver(props) {
 		}
 
 		// Animates rotation of the face (by clockwise if cw), and then swaps stickers
-		function animateRotation(face, cw, currentTime) {
+		function animateRotation(face, cw, currentTime, async = true) {
 			var k = 0.3 * ((face % 2) * 2 - 1) * (2 * cw - 1),
 				qubes = Array(9)
 					.fill(pieces[face])
@@ -148,7 +154,13 @@ function Solver(props) {
 					);
 				});
 				if (passed >= 300) return swapPieces(face, 3 - 2 * cw);
-				requestAnimationFrame(rotatePieces);
+				if (async) {
+					// Use this for smooth animation
+					requestAnimationFrame(rotatePieces);
+				} else {
+					// Use this for fast animation
+					rotatePieces();
+				}
 			})();
 		}
 
@@ -194,319 +206,386 @@ function Solver(props) {
 			}
 			function mouseup() {
 				document.body.appendChild(guide);
-				scene.removeEventListener("mousemove", mousemove);
-				document.removeEventListener("mouseup", mouseup);
-				scene.addEventListener("mousedown", mousedown);
+				// scene.removeEventListener("mousemove", mousemove);
+				// document.removeEventListener("mouseup", mouseup);
+				// scene.addEventListener("mousedown", mousedown);
 			}
 
 			(element || document.body).appendChild(guide);
-			scene.addEventListener("mousemove", mousemove);
-			document.addEventListener("mouseup", mouseup);
-			scene.removeEventListener("mousedown", mousedown);
-		}
-		function guide_moves(moveInstructions) {
-			var startXYZ = pivot.style.transform
-				.match(/-?\d+\.?\d*/g)
-				.map(Number);
-			let startX = 0;
-			moveInstructions.map((move, index) => {
-				setTimeout(() => {
-					animateRotation(...move, Date.now());
-					// pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1] + 90}deg) rotateZ(${startXYZ[2]}deg)`;
-					// pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1] - 90}deg) rotateZ(${startXYZ[2]}deg)`;
-					// pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2] - 90}deg)`;
-					// pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2] + 90}deg)`;
-
-					// To preserve 3D Perspective while rotating in X-axis, use rotate3d()
-					// startX = startX + 90;
-					// pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg) rotate3d(1,0,0,${startX}deg)`;
-
-					// startX = startX - 90;
-					// pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg) rotate3d(1,0,0,${startX}deg)`;
-				}, 1000 * (index + 1));
-			});
+			// scene.addEventListener("mousemove", mousemove);
+			// document.addEventListener("mouseup", mouseup);
+			// scene.removeEventListener("mousedown", mousedown);
 		}
 
 		// Single Side Rotation Logic Functions
-		function rotateFront(clockwise) {
-			animateRotation(orientation.front, clockwise, Date.now());
+		function rotateFront(clockwise, async) {
+			animateRotation(orientation.front, clockwise, Date.now(), async);
 		}
-		function rotateRight(clockwise) {
-			animateRotation(orientation.right, clockwise, Date.now());
+		function rotateRight(clockwise, async) {
+			animateRotation(orientation.right, clockwise, Date.now(), async);
 		}
-		function rotateUpper(clockwise) {
-			animateRotation(orientation.upper, clockwise, Date.now());
+		function rotateUpper(clockwise, async) {
+			animateRotation(orientation.upper, clockwise, Date.now(), async);
 		}
-		function rotateDown(clockwise) {
-			animateRotation(orientation.down, clockwise, Date.now());
+		function rotateDown(clockwise, async) {
+			animateRotation(orientation.down, clockwise, Date.now(), async);
 		}
-		function rotateLeft(clockwise) {
-			animateRotation(orientation.left, clockwise, Date.now());
+		function rotateLeft(clockwise, async) {
+			animateRotation(orientation.left, clockwise, Date.now(), async);
 		}
-		function rotateBack(clockwise) {
-			animateRotation(orientation.back, clockwise, Date.now());
+		function rotateBack(clockwise, async) {
+			animateRotation(orientation.back, clockwise, Date.now(), async);
 		}
-
+		
 		// Entire Cube Rotation Logic Functions
-		var startXYZ = pivot.style.transform
-				.match(/-?\d+\.?\d*/g)
-				.map(Number);
+		var startXYZ = pivot.style.transform.match(/-?\d+\.?\d*/g).map(Number);
 		let startX = 0;
-		function turnX(clockwise)
-		{
-			if(clockwise)
-				startX = startX + 90;
-			else
-				startX = startX - 90;
+		function turnX(clockwise) {
+			if (clockwise) startX = startX + 90;
+			else startX = startX - 90;
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg) rotate3d(1,0,0,${startX}deg)`;
-			setOrientation(prevOrientation =>
-				{
-					if(clockwise)
-					{
-						return {
-							...prevOrientation,
-							right: prevOrientation.upper,
-							upper: prevOrientation.left,
-							down: prevOrientation.right,
-							left: prevOrientation.down
-						};
-					}
-					else
-					{
-						return {
-							...prevOrientation,
-							right: prevOrientation.down,
-							upper: prevOrientation.right,
-							down: prevOrientation.left,
-							left: prevOrientation.upper
-						};
-					}
-				});
+			setOrientation((prevOrientation) => {
+				if (clockwise) {
+					return {
+						...prevOrientation,
+						right: prevOrientation.upper,
+						upper: prevOrientation.left,
+						down: prevOrientation.right,
+						left: prevOrientation.down,
+					};
+				} else {
+					return {
+						...prevOrientation,
+						right: prevOrientation.down,
+						upper: prevOrientation.right,
+						down: prevOrientation.left,
+						left: prevOrientation.upper,
+					};
+				}
+			});
 		}
-		function turnY(clockwise)
-		{
-			if(clockwise)
-				startXYZ[1] = startXYZ[1] - 90;
-			else
-				startXYZ[1] = startXYZ[1] + 90;
+		function turnY(clockwise) {
+			if (clockwise) startXYZ[1] = startXYZ[1] - 90;
+			else startXYZ[1] = startXYZ[1] + 90;
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg)`;
-			setOrientation(prevOrientation =>
-				{
-					if(clockwise)
-					{
-						return {
-							...prevOrientation,
-							front: prevOrientation.right,
-							right: prevOrientation.back,
-							left: prevOrientation.front,
-							back: prevOrientation.left
-						};
-					}
-					else
-					{
-						return {
-							...prevOrientation,
-							front: prevOrientation.left,
-							right: prevOrientation.front,
-							left: prevOrientation.back,
-							back: prevOrientation.right
-						};
-					}
-				});
+			setOrientation((prevOrientation) => {
+				if (clockwise) {
+					return {
+						...prevOrientation,
+						front: prevOrientation.right,
+						right: prevOrientation.back,
+						left: prevOrientation.front,
+						back: prevOrientation.left,
+					};
+				} else {
+					return {
+						...prevOrientation,
+						front: prevOrientation.left,
+						right: prevOrientation.front,
+						left: prevOrientation.back,
+						back: prevOrientation.right,
+					};
+				}
+			});
 		}
-		function turnZ(clockwise)
-		{
-			if(clockwise)
-				startXYZ[2] = startXYZ[2] - 90;
-			else
-				startXYZ[2] = startXYZ[2] + 90;
+		function turnZ(clockwise) {
+			if (clockwise) startXYZ[2] = startXYZ[2] - 90;
+			else startXYZ[2] = startXYZ[2] + 90;
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg)`;
-			setOrientation(prevOrientation =>
-				{
-					if(clockwise)
-					{
-						return {
-							...prevOrientation,
-							front: prevOrientation.down,
-							upper: prevOrientation.front,
-							down: prevOrientation.back,
-							back: prevOrientation.upper
-						};
-					}
-					else
-					{
-						return {
-							...prevOrientation,
-							front: prevOrientation.upper,
-							upper: prevOrientation.back,
-							down: prevOrientation.front,
-							back: prevOrientation.down
-						};
-					}
-				});
+			setOrientation((prevOrientation) => {
+				if (clockwise) {
+					return {
+						...prevOrientation,
+						front: prevOrientation.down,
+						upper: prevOrientation.front,
+						down: prevOrientation.back,
+						back: prevOrientation.upper,
+					};
+				} else {
+					return {
+						...prevOrientation,
+						front: prevOrientation.upper,
+						upper: prevOrientation.back,
+						down: prevOrientation.front,
+						back: prevOrientation.down,
+					};
+				}
+			});
 		}
 
 		// Dual Layer Rotation Logic Functions
-		function rotateFrontDual(clockwise)
-		{
-			rotateBack(clockwise);
-			setTimeout(() =>
-			{
-				turnX(clockwise);
-			}, delay);
-		}
-		function rotateRightDual(clockwise)
-		{
-			rotateLeft(clockwise);
-			setTimeout(() =>
-			{
-				turnZ(clockwise);
-			}, delay);
-		}
-		function rotateUpperDual(clockwise)
-		{
-			rotateDown(clockwise);
-			setTimeout(() =>
-			{
-				turnY(clockwise);
-			}, delay);
-		}
-		function rotateDownDual(clockwise)
-		{
-			rotateUpper(clockwise);
-			setTimeout(() =>
-			{
-				turnY(!clockwise);
-			}, delay);
-		}
-		function rotateLeftDual(clockwise)
-		{
-			rotateRight(clockwise);
-			setTimeout(() =>
-			{
-				turnZ(!clockwise);
-			}, delay);
-		}
-		function rotateBackDual(clockwise)
-		{
-			rotateFront(clockwise);
-			setTimeout(() =>
-			{
-				turnX(!clockwise);
-			}, delay);
-		}
-		
-		// Middle Layer Rotation Logic Functions
-		function rotateM(clockwise)
-		{
-			rotateRight(clockwise);
-			setTimeout(() =>
-			{
-				rotateLeft(!clockwise);
-				setTimeout(() =>
-				{
-					turnZ(!clockwise);
-				}, delay);
-			}, delay);
-		}
-		function rotateE(clockwise)
-		{
-			rotateUpper(clockwise);
-			setTimeout(() =>
-			{
-				rotateDown(!clockwise);
-				setTimeout(() =>
-				{
-					turnY(!clockwise);
-				}, delay);
-			}, delay);
-		}
-		function rotateS(clockwise)
-		{
-			rotateFront(!clockwise);
-			setTimeout(() =>
-			{
-				rotateBack(clockwise);
-				setTimeout(() =>
-				{
+		function rotateFrontDual(clockwise, async) {
+			if(async) i++;								// Buying(Reserving) More Time
+			rotateBack(clockwise, async);
+			if (async) {
+				setTimeout(() => {
 					turnX(clockwise);
+					i--;								// Freeing the reserved time
 				}, delay);
-			}, delay);
+			} else {
+				turnX(clockwise);
+			}
+		}
+		function rotateRightDual(clockwise, async) {
+			if(async) i++;
+			rotateLeft(clockwise, async);
+			if (async) {
+				setTimeout(() => {
+					turnZ(clockwise);
+					i--;
+				}, delay);
+			} else {
+				turnZ(clockwise);
+			}
+		}
+		function rotateUpperDual(clockwise, async) {
+			if(async) i++;
+			rotateDown(clockwise, async);
+			if (async) {
+				setTimeout(() => {
+					turnY(clockwise);
+					i--;
+				}, delay);
+			} else {
+				turnY(clockwise);
+			}
+		}
+		function rotateDownDual(clockwise, async) {
+			if(async) i++;
+			rotateUpper(clockwise, async);
+			if (async) {
+				setTimeout(() => {
+					turnY(!clockwise);
+					i--;
+				}, delay);
+			} else {
+				turnY(!clockwise);
+			}
+		}
+		function rotateLeftDual(clockwise, async) {
+			if(async) i++;
+			rotateRight(clockwise, async);
+			if (async) {
+				setTimeout(() => {
+					turnZ(!clockwise);
+					i--;
+				}, delay);
+			} else {
+				turnZ(!clockwise);
+			}
+		}
+		function rotateBackDual(clockwise, async) {
+			if(async) i++;
+			rotateFront(clockwise, async);
+			if (async) {
+				setTimeout(() => {
+					turnX(!clockwise);
+					i--;
+				}, delay);
+			} else {
+				turnX(!clockwise);
+			}
 		}
 
-		// Solver Single Output to Cube Move Function 
-		function applyMove(move)
-		{
+		// Middle Layer Rotation Logic Functions
+		function rotateM(clockwise, async) {
+			if(async) i+=2;								// Buying(Reserving) Double Time for two Asynchronous Moves
+			rotateRight(clockwise, async);
+			if (async) {
+				setTimeout(() => {
+					rotateLeft(!clockwise, async);
+					i--;								// Freeing 1st bought Time
+					setTimeout(() => {
+						turnZ(!clockwise);
+						i--;							// Freeing 2nd bought Time
+					}, delay);
+				}, delay);
+			} else {
+				rotateLeft(!clockwise, async);
+				turnZ(!clockwise);
+			}
+		}
+		function rotateE(clockwise, async) {
+			if(async) i+=2;
+			rotateUpper(clockwise, async);
+			if (async) {
+				setTimeout(() => {
+					rotateDown(!clockwise, async);
+					i--;
+					setTimeout(() => {
+						turnY(!clockwise);
+						i--;
+					}, delay);
+				}, delay);
+			} else {
+				rotateDown(!clockwise, async);
+				turnY(!clockwise);
+			}
+		}
+		function rotateS(clockwise, async) {
+			if(async) i+=2;
+			rotateFront(!clockwise, async);
+			if (async) {
+				setTimeout(() => {
+					rotateBack(clockwise, async);
+					i--;
+					setTimeout(() => {
+						turnX(clockwise);
+						i--;
+					}, delay);
+				}, delay);
+			} else {
+				rotateBack(clockwise, async);
+				turnX(clockwise);
+			}
+		}
+
+		// Solver Single Output to Cube Move Function
+		function applyMove(move, async) {
 			let rotation = move[0];
-			let clockwise = move.includes("2") ? true : move.includes("prime") ? false : true;
+			let clockwise = move.includes("2")
+				? true
+				: move.includes("prime")
+				? false
+				: true;
 
-			let moveFunction = function findMove()
-			{
-				switch(rotation)
-				{
+			let moveFunction = function findMove() {
+				switch (rotation) {
 					case "F":
-						return rotateFront(clockwise);
+						return rotateFront(clockwise, async);
 					case "R":
-						return rotateRight(clockwise);
+						return rotateRight(clockwise, async);
 					case "U":
-						return rotateUpper(clockwise);
+						return rotateUpper(clockwise, async);
 					case "D":
-						return rotateDown(clockwise);
+						return rotateDown(clockwise, async);
 					case "L":
-						return rotateLeft(clockwise);
+						return rotateLeft(clockwise, async);
 					case "B":
-						return rotateBack(clockwise);
-
+						return rotateBack(clockwise, async);
 
 					case "f":
-						return rotateFrontDual(clockwise);
+						return rotateFrontDual(clockwise, async);
 					case "r":
-						return rotateRightDual(clockwise);
+						return rotateRightDual(clockwise, async);
 					case "u":
-						return rotateUpperDual(clockwise);
+						return rotateUpperDual(clockwise, async);
 					case "d":
-						return rotateDownDual(clockwise);
+						return rotateDownDual(clockwise, async);
 					case "l":
-						return rotateLeftDual(clockwise);
+						return rotateLeftDual(clockwise, async);
 					case "b":
-						return rotateBackDual(clockwise);
-
+						return rotateBackDual(clockwise, async);
 
 					case "M":
-						return rotateM(clockwise);
+						return rotateM(clockwise, async);
 					case "E":
-						return rotateE(clockwise);
+						return rotateE(clockwise, async);
 					case "S":
-						return rotateS(clockwise);
-					default: 
+						return rotateS(clockwise, async);
+					default:
 						console.log("Move Function Conversion Error");
 				}
-			}
-			if(move.includes("2"))
-			{
-				moveFunction();
-				setTimeout(() =>
-				{
+			};
+			moveFunction();
+			if (move.includes("2")) {
+				if (async) {
+					i++;
+					setTimeout(() => {
+						moveFunction();
+						i--;
+					}, delay);
+				} else {
 					moveFunction();
-				}, delay);
-			}
-			else
-			{
-				moveFunction();
+				}
 			}
 		}
-		setTimeout(() =>
-		{
-			applyMove(props.movesAlgo.reverseAlgo[0]);
-		}, delay);
+
+		// Cube Scramble with Reverse Algorithm Execution
+		function scramble_cube() {
+			movesNum.classList.remove("active");
+			stepCountBtn.classList.remove("active");
+			repeatBtn.setAttribute("disabled", "");
+			nextBtn.setAttribute("disabled", "");
+			let async = false;
+			setTimeout(() => {
+				applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
+				if (reverseIndex < props.movesAlgo.reverseAlgo.length - 1) {
+					reverseIndex++;
+					scramble_cube();
+				} else {
+					movesNum.classList.add("active");
+					nextBtn.removeAttribute("disabled");
+					setMoveMessage(`Orient your cube as shown here to solve.`);
+					return;
+				}
+				// let elem = getPieceBy(5, 4, 0);
+				// elem.style.backgroundColor = "red";
+				// console.log(elem);
+			}, 10);
+		}
+		scramble_cube();
+		function guide_moves() {
+			let async = true;
+			applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
+		}
 		document.ondragstart = function () {
 			return false;
 		};
-		scene.addEventListener("mousedown", mousedown);
+		// scene.addEventListener("mousedown", mousedown);
 		assembleCube();
-		// guide_moves(moveInstructions);
+		// guide_moves();
 		// rotateRight(true);
-	});
+		function nextMove(repeat = false) {
+			i++;										// Buying Time for Delay Execution
+			movesNum.classList.remove("active");
+			repeatBtn.removeAttribute("disabled");
+			stepCountBtn.classList.add("active");
+			console.log("Clicked Next Button");
+			let async = true;
+			// if(forwardIndex < props.movesAlgo.forwardAlgo.length)
+			// {
+			// 	// nextBtn.setAttribute('disabled', '');
+			// 	setStepCount(prevCount => prevCount + 1);
+			// 	setTimeout(() =>
+			// 	{
+			// 		applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
+			// 		forwardIndex++;
+			// 		i--;
+			// 	}, (delay * i));
+			// }
+			// else
+			// {
+			// 	console.log("Cube Solved...CONGRATULATIONS!!!");
+			// }
+			setTimeout(() => {
+				if (forwardIndex < props.movesAlgo.forwardAlgo.length) {
+					// nextBtn.setAttribute('disabled', '');
+					if(!repeat) 
+					{
+						setStepCount((prevCount) => prevCount + 1);
+					}
+					applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
+					forwardIndex++;
+					i--;									// Freeing bought Time for next Move
+				} else {
+					console.log("Cube Solved...CONGRATULATIONS!!!");
+				}
+			}, delay * i);
+		}
+		function repeatMove()
+		{
+			let async = false, repeat = true;
+			let reverseStepIndex = props.movesAlgo.reverseAlgo.length - (forwardIndex);
+			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
+			forwardIndex--;
+			// forwardIndex--;
+			nextMove(repeat);
+		}
+
+		nextBtn.addEventListener("click", (e) => nextMove(false));
+		repeatBtn.addEventListener("click", repeatMove);
+	}, []);
 	// Example of interpreted move instruction
 
 	// // Cube Face Input Logic
@@ -528,6 +607,9 @@ function Solver(props) {
 
 	return (
 		<div className={`cube__container${solverStyle}`}>
+			<div className="step__count flex__center--row">{`Step: ${stepCount}`}</div>
+			<div className="move__name">{moveMessage}</div>
+			<div className="moves__num">{`${props.movesAlgo.forwardAlgo.length} moves needed`}</div>
 			<div className="scene" id="scene">
 				<div
 					className="pivot centered"
@@ -784,6 +866,12 @@ function Solver(props) {
 					}}
 				></div>
 			</div>
+			<button className="repeat__btn" disabled>
+				Repeat
+			</button>
+			<button className="next__move--btn" disabled>
+				Next
+			</button>
 			{/* <Helmet>
         		<script src="../src/components/solver/script.js" />
       		</Helmet> */}
