@@ -1,7 +1,7 @@
 import "./style.css";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import solver from "rubiks-cube-solver";
+// import solver from "rubiks-cube-solver";
 
 // import { Helmet } from "react-helmet";
 
@@ -50,6 +50,7 @@ function Solver(props) {
 		let movesNum = document.querySelector(".moves__num");
 		let stepCountBtn = document.querySelector(".step__count");
 		let repeatBtn = document.querySelector(".repeat__btn");
+		let prevBtn = document.querySelector(".previous__btn");
 		let nextBtn = document.querySelector(".next__move--btn");
 		// var colors = ['blue', 'green', 'yellow', 'white', 'orange', 'red'],
 		var colors = ["blue", "green", "white", "yellow", "red", "orange"],
@@ -505,6 +506,7 @@ function Solver(props) {
 		function scramble_cube() {
 			movesNum.classList.remove("active");
 			stepCountBtn.classList.remove("active");
+			prevBtn.setAttribute("disabled", "");
 			repeatBtn.setAttribute("disabled", "");
 			nextBtn.setAttribute("disabled", "");
 			let async = false;
@@ -567,6 +569,15 @@ function Solver(props) {
 					}
 					applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
 					forwardIndex++;
+					if(forwardIndex >= 2)
+					{
+						prevBtn.removeAttribute("disabled");
+					}
+					else
+					{
+						prevBtn.setAttribute("disabled", "");
+
+					}
 					i--;									// Freeing bought Time for next Move
 				} else {
 					console.log("Cube Solved...CONGRATULATIONS!!!");
@@ -579,31 +590,24 @@ function Solver(props) {
 			let reverseStepIndex = props.movesAlgo.reverseAlgo.length - (forwardIndex);
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			forwardIndex--;
-			// forwardIndex--;
 			nextMove(repeat);
 		}
-
+		function previousMove()
+		{
+			let async = false, repeat = false;
+			let reverseStepIndex = props.movesAlgo.reverseAlgo.length - (forwardIndex);
+			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
+			reverseStepIndex++;
+			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
+			forwardIndex -= 2;
+			setStepCount((prevCount) => prevCount - 2);
+			nextMove(repeat);
+		}
+		prevBtn.addEventListener("click", previousMove);
 		nextBtn.addEventListener("click", (e) => nextMove(false));
 		repeatBtn.addEventListener("click", repeatMove);
 	}, []);
-	// Example of interpreted move instruction
 
-	// // Cube Face Input Logic
-	// function setLoader()
-	// {
-	// 	props.tellLoadStatus();
-	// 	// display_cube();
-	// }
-	// console.log(props.isLoaded);
-	// if(props.isLoaded)
-	// {
-	// 	display_cube();
-	// }
-
-	// if(props.shouldShow)
-	// {
-	// 	solverStyle = " solver__active"
-	// }
 
 	return (
 		<div className={`cube__container${solverStyle}`}>
@@ -866,6 +870,9 @@ function Solver(props) {
 					}}
 				></div>
 			</div>
+			<button className="previous__btn" disabled>
+				Previous
+			</button>
 			<button className="repeat__btn" disabled>
 				Repeat
 			</button>

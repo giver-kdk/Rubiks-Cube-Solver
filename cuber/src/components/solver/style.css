@@ -200,7 +200,7 @@ body {
 	background-color: #DF0500;
 	background-color: #cd2e19;
 }
-.next__move--btn, .repeat__btn
+.next__move--btn, .repeat__btn, .previous__btn
 {
 	height: 40px;
 	width: 150px;
@@ -220,7 +220,11 @@ body {
 	background-color: #32b7c3c6;
 	right: 15rem;
 }
-.next__move--btn:hover, .repeat__btn:hover
+.previous__btn
+{
+	right: 27rem;
+}
+.next__move--btn:hover, .repeat__btn:hover, .previous__btn:hover
 {
 	cursor: pointer;
 	background-color: rgb(255, 28, 100);
@@ -230,12 +234,12 @@ body {
 {
 	background-color: #32B8C3;
 }
-.next__move--btn:disabled, .repeat__btn:disabled
+.next__move--btn:disabled, .repeat__btn:disabled, .previous__btn:disabled
 {
 	background-color: rgb(169, 169, 169);
 	transition: all 0.15s ease-in;
 }
-.next__move--btn:disabled:hover, .repeat__btn:disabled:hover
+.next__move--btn:disabled:hover, .repeat__btn:disabled:hover, .previous__btn:disabled:hover
 {
 	cursor: default;
 	background-color: rgb(169, 169, 169);
