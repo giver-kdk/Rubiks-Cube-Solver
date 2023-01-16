@@ -1,18 +1,20 @@
 import "./style.css";
 import React, { useState } from "react";
 import { useEffect } from "react";
-// import solver from "rubiks-cube-solver";
 
-// import { Helmet } from "react-helmet";
-
+// Reverses cube state to user's cube state and solves using step-wise animation
 function Solver(props) {
-	// Cube Solving Logic
-	// Here, "i" is the factor for amount of time needed(Says how long we should wait)
-	let delay = 500,
-		i = 0;
-	let reverseIndex = 0,
-		forwardIndex = 0;
+	// Moving to next step while solving cube is asynchronous process
+	// If user clicks "Next" at faster rate, some extra time is needed to animate previous steps
+	// Here, "i" is the factor for amount of time to be reserved for the animation(waiting duration)
+	let delay = 500, i = 0;
+	let reverseIndex = 0, forwardIndex = 0;
 	let solverStyle = "";
+	let [stepCount, setStepCount] = useState(0);
+	let [moveMessage, setMoveMessage] = useState(
+		"Syncing the cube state with yours...🪄"
+	);
+	// Orientaion is denoted by integers. If cube orientation changes, integer value is updated
 	let [orientation, setOrientation] = useState({
 		front: 1,
 		right: 4,
@@ -21,38 +23,16 @@ function Solver(props) {
 		left: 5,
 		back: 0,
 	});
-	let [stepCount, setStepCount] = useState(0);
-	let [moveMessage, setMoveMessage] = useState(
-		"Syncing the cube state with yours...🪄"
-	);
-	// let w = "u", g = "f", r = "r", o = "l", b = "b", y = "d";
-	// let frontFace = [o, r, y, b, g, g, o, g, w].join("");
-	// let rightFace = [r, y, w, y, r, w, r, o, w].join("");
-	// let upperFace = [g, y, b, r, w, r, w, g, g].join("");
-	// let downFace = [y, o, g, o, y, b, r, b, o].join("");
-	// let leftFace = [y, b, b, r, o, w, y, w, b].join("");
-	// let backFace = [r, o, o, g, b, w, g, y, b].join("");
-
-	// let cubeState = [
-	// frontFace,
-	// rightFace,
-	// upperFace,
-	// downFace,
-	// leftFace,
-	// backFace
-	// ].join('');
-
-	// let solveMoves = solver(cubeState).split(" ");
-	// console.log(solveMoves);
+	
+	// Start reverse and forward algorithm animation after component is mounted
 	useEffect(() => {
-		// let scene = document.getElementById("scene");
-		console.log("Script Ran");
+		console.log("Script Started");
 		let movesNum = document.querySelector(".moves__num");
 		let stepCountBtn = document.querySelector(".step__count");
 		let repeatBtn = document.querySelector(".repeat__btn");
 		let prevBtn = document.querySelector(".previous__btn");
 		let nextBtn = document.querySelector(".next__move--btn");
-		// var colors = ['blue', 'green', 'yellow', 'white', 'orange', 'red'],
+		// Create color array by matching its index with "orientation" value
 		var colors = ["blue", "green", "white", "yellow", "red", "orange"],
 			pieces = document.getElementsByClassName("piece");
 
@@ -65,22 +45,19 @@ function Solver(props) {
 				6
 			);
 		}
-
+		// Get face axis for rotation: X, Y or Z
 		function getAxis(face) {
-			return String.fromCharCode("X".charCodeAt(0) + face / 2); // X, Y or Z
+			return String.fromCharCode("X".charCodeAt(0) + face / 2); 
 		}
 
 		// Moves each of 26 pieces to their places, assigns IDs and attaches stickers
 		function assembleCube() {
 			function moveto(face) {
 				id = id + (1 << face);
-
-				// pieces[i].children[face].appendChild(document.createElement('div'))
-				// 	.setAttribute('class', 'sticker ' + colors[face]);
 				pieces[i].children[face]
 					.appendChild(document.createElement("div"))
 					.setAttribute("class", "sticker " + colors[face]);
-
+				// Move repective pieces to their position
 				return (
 					"translate" +
 					getAxis(face) +
@@ -89,6 +66,7 @@ function Solver(props) {
 					"em)"
 				);
 			}
+			// Orient respective pieces using rotation
 			for (var id, x, i = 0; (id = 0), i < 26; i++) {
 				x = mx(i, i % 18);
 				pieces[i].style.transform =
@@ -100,7 +78,7 @@ function Solver(props) {
 				pieces[i].setAttribute("id", "piece" + id);
 			}
 		}
-
+		// Access required piece of specified face of cube
 		function getPieceBy(face, index, corner) {
 			return document.getElementById(
 				"piece" +
@@ -156,69 +134,69 @@ function Solver(props) {
 				});
 				if (passed >= 300) return swapPieces(face, 3 - 2 * cw);
 				if (async) {
-					// Use this for smooth animation
+					// Does smooth animation for forward algo
 					requestAnimationFrame(rotatePieces);
 				} else {
-					// Use this for fast animation
+					// Does fast animation for reverse algo
 					rotatePieces();
 				}
 			})();
 		}
 
 		// Events
-		function mousedown(md_e) {
-			// Side Rotation Logic
-			var startXY = pivot.style.transform
-					.match(/-?\d+\.?\d*/g)
-					.map(Number),
-				element = md_e.target.closest(".element"),
-				face = [].indexOf.call(
-					(element || cube).parentNode.children,
-					element
-				);
-			function mousemove(mm_e) {
-				if (element) {
-					var gid = /\d/.exec(
-						document.elementFromPoint(mm_e.pageX, mm_e.pageY).id
-					);
-					if (gid && gid.input.includes("anchor")) {
-						mouseup();
-						var e =
-							element.parentNode.children[
-								mx(face, Number(gid) + 3)
-							].hasChildNodes();
-						animateRotation(
-							mx(face, Number(gid) + 1 + 2 * e),
-							e,
-							Date.now()
-						);
-						// console.log(mx(face, Number(gid) + 1 + 2 * e), e, Date.now());
-					}
-				}
-				// Orientation change logic
-				else
-					pivot.style.transform =
-						"rotateX(" +
-						(startXY[0] - (mm_e.pageY - md_e.pageY) / 2) +
-						"deg)" +
-						"rotateY(" +
-						(startXY[1] + (mm_e.pageX - md_e.pageX) / 2) +
-						"deg)";
-			}
-			function mouseup() {
-				document.body.appendChild(guide);
-				// scene.removeEventListener("mousemove", mousemove);
-				// document.removeEventListener("mouseup", mouseup);
-				// scene.addEventListener("mousedown", mousedown);
-			}
+		// function mousedown(md_e) {
+		// 	// Side Rotation Logic
+		// 	var startXY = pivot.style.transform
+		// 			.match(/-?\d+\.?\d*/g)
+		// 			.map(Number),
+		// 		element = md_e.target.closest(".element"),
+		// 		face = [].indexOf.call(
+		// 			(element || cube).parentNode.children,
+		// 			element
+		// 		);
+		// 	function mousemove(mm_e) {
+		// 		if (element) {
+		// 			var gid = /\d/.exec(
+		// 				document.elementFromPoint(mm_e.pageX, mm_e.pageY).id
+		// 			);
+		// 			if (gid && gid.input.includes("anchor")) {
+		// 				mouseup();
+		// 				var e =
+		// 					element.parentNode.children[
+		// 						mx(face, Number(gid) + 3)
+		// 					].hasChildNodes();
+		// 				animateRotation(
+		// 					mx(face, Number(gid) + 1 + 2 * e),
+		// 					e,
+		// 					Date.now()
+		// 				);
+		// 				// console.log(mx(face, Number(gid) + 1 + 2 * e), e, Date.now());
+		// 			}
+		// 		}
+		// 		// Orientation change logic
+		// 		else
+		// 			pivot.style.transform =
+		// 				"rotateX(" +
+		// 				(startXY[0] - (mm_e.pageY - md_e.pageY) / 2) +
+		// 				"deg)" +
+		// 				"rotateY(" +
+		// 				(startXY[1] + (mm_e.pageX - md_e.pageX) / 2) +
+		// 				"deg)";
+		// 	}
+		// 	function mouseup() {
+		// 		document.body.appendChild(guide);
+		// 		// scene.removeEventListener("mousemove", mousemove);
+		// 		// document.removeEventListener("mouseup", mouseup);
+		// 		// scene.addEventListener("mousedown", mousedown);
+		// 	}
 
-			(element || document.body).appendChild(guide);
-			// scene.addEventListener("mousemove", mousemove);
-			// document.addEventListener("mouseup", mouseup);
-			// scene.removeEventListener("mousedown", mousedown);
-		}
+		// 	(element || document.body).appendChild(guide);
+		// 	// scene.addEventListener("mousemove", mousemove);
+		// 	// document.addEventListener("mouseup", mouseup);
+		// 	// scene.removeEventListener("mousedown", mousedown);
+		// }
 
-		// Single Side Rotation Logic Functions
+		// Single Side/Face Rotation Logic Functions
 		function rotateFront(clockwise, async) {
 			animateRotation(orientation.front, clockwise, Date.now(), async);
 		}
@@ -241,10 +219,13 @@ function Solver(props) {
 		// Entire Cube Rotation Logic Functions
 		var startXYZ = pivot.style.transform.match(/-?\d+\.?\d*/g).map(Number);
 		let startX = 0;
+		// Rotate entire cube about X-axis
 		function turnX(clockwise) {
+			// Perform rotation using CSS
 			if (clockwise) startX = startX + 90;
 			else startX = startX - 90;
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg) rotate3d(1,0,0,${startX}deg)`;
+			// Orientation is changed. So, update "orientation" value
 			setOrientation((prevOrientation) => {
 				if (clockwise) {
 					return {
@@ -265,6 +246,7 @@ function Solver(props) {
 				}
 			});
 		}
+		// Rotate entire cube about Y-axis
 		function turnY(clockwise) {
 			if (clockwise) startXYZ[1] = startXYZ[1] - 90;
 			else startXYZ[1] = startXYZ[1] + 90;
@@ -289,6 +271,7 @@ function Solver(props) {
 				}
 			});
 		}
+		// Rotate entire cube about Z-axis
 		function turnZ(clockwise) {
 			if (clockwise) startXYZ[2] = startXYZ[2] - 90;
 			else startXYZ[2] = startXYZ[2] + 90;
@@ -313,8 +296,12 @@ function Solver(props) {
 				}
 			});
 		}
-
-		// Dual Layer Rotation Logic Functions
+		/*
+			Dual Layer Rotation Logic Functions:
+				To simulate 2 front faces rotation at same time, perform negative rotation on back face.
+				Then, positively rotate the entire cube 
+		*/
+		// Rotate 2 front faces
 		function rotateFrontDual(clockwise, async) {
 			if(async) i++;								// Buying(Reserving) More Time
 			rotateBack(clockwise, async);
@@ -327,6 +314,7 @@ function Solver(props) {
 				turnX(clockwise);
 			}
 		}
+		// Rotate 2 right faces
 		function rotateRightDual(clockwise, async) {
 			if(async) i++;
 			rotateLeft(clockwise, async);
@@ -339,6 +327,7 @@ function Solver(props) {
 				turnZ(clockwise);
 			}
 		}
+		// Rotate 2 upper faces
 		function rotateUpperDual(clockwise, async) {
 			if(async) i++;
 			rotateDown(clockwise, async);
@@ -351,6 +340,7 @@ function Solver(props) {
 				turnY(clockwise);
 			}
 		}
+		// Rotate 2 down faces
 		function rotateDownDual(clockwise, async) {
 			if(async) i++;
 			rotateUpper(clockwise, async);
@@ -363,6 +353,7 @@ function Solver(props) {
 				turnY(!clockwise);
 			}
 		}
+		// Rotate 2 left faces
 		function rotateLeftDual(clockwise, async) {
 			if(async) i++;
 			rotateRight(clockwise, async);
@@ -375,6 +366,7 @@ function Solver(props) {
 				turnZ(!clockwise);
 			}
 		}
+		// Rotate 2 back faces
 		function rotateBackDual(clockwise, async) {
 			if(async) i++;
 			rotateFront(clockwise, async);
@@ -388,7 +380,12 @@ function Solver(props) {
 			}
 		}
 
-		// Middle Layer Rotation Logic Functions
+		/*
+			Middle Layer Rotation Logic Functions:
+				To simulate rotation of middle layer, perform negative rotations on 2 side faces.
+				Then positively rotate the entire cube
+		*/
+		// Rotate Z-axis middle layer
 		function rotateM(clockwise, async) {
 			if(async) i+=2;								// Buying(Reserving) Double Time for two Asynchronous Moves
 			rotateRight(clockwise, async);
@@ -406,6 +403,7 @@ function Solver(props) {
 				turnZ(!clockwise);
 			}
 		}
+		// Rotate Y-axis middle layer
 		function rotateE(clockwise, async) {
 			if(async) i+=2;
 			rotateUpper(clockwise, async);
@@ -423,6 +421,7 @@ function Solver(props) {
 				turnY(!clockwise);
 			}
 		}
+		// Rotate X-axis middle layer
 		function rotateS(clockwise, async) {
 			if(async) i+=2;
 			rotateFront(!clockwise, async);
@@ -440,16 +439,19 @@ function Solver(props) {
 				turnX(clockwise);
 			}
 		}
+		// Convert algorithm's text output into actual animation
+		// Map "solver" individual output with cube rotation functions
 
-		// Solver Single Output to Cube Move Function
+		// Low Level text to rotation
 		function applyMove(move, async) {
 			let rotation = move[0];
+			// Detect direction of rotation
 			let clockwise = move.includes("2")
 				? true
 				: move.includes("prime")
 				? false
 				: true;
-
+			// Find corresponding rotation function
 			let moveFunction = function findMove() {
 				switch (rotation) {
 					case "F":
@@ -488,7 +490,8 @@ function Solver(props) {
 						console.log("Move Function Conversion Error");
 				}
 			};
-			moveFunction();
+			moveFunction();					// Apply the rotation
+			// Apply rotation again if move includes 2 rotations
 			if (move.includes("2")) {
 				if (async) {
 					i++;
@@ -506,69 +509,52 @@ function Solver(props) {
 		function scramble_cube() {
 			movesNum.classList.remove("active");
 			stepCountBtn.classList.remove("active");
+			// Initially, "Previous", "Repeat" and "Next" are disabled
 			prevBtn.setAttribute("disabled", "");
 			repeatBtn.setAttribute("disabled", "");
 			nextBtn.setAttribute("disabled", "");
-			let async = false;
+			let async = false;				// Scramble should not be smooth
+			// Recursively scramble until reverse algorithm finishes
 			setTimeout(() => {
 				applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
 				if (reverseIndex < props.movesAlgo.reverseAlgo.length - 1) {
 					reverseIndex++;
 					scramble_cube();
 				} else {
+					// Allow user to move to next page
 					movesNum.classList.add("active");
 					nextBtn.removeAttribute("disabled");
 					setMoveMessage(`Orient your cube as shown here to solve.`);
 					return;
 				}
-				// let elem = getPieceBy(5, 4, 0);
-				// elem.style.backgroundColor = "red";
-				// console.log(elem);
 			}, 10);
 		}
 		scramble_cube();
-		function guide_moves() {
-			let async = true;
-			applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
-		}
 		document.ondragstart = function () {
 			return false;
 		};
 		// scene.addEventListener("mousedown", mousedown);
 		assembleCube();
-		// guide_moves();
-		// rotateRight(true);
+		// Animates next move
 		function nextMove(repeat = false) {
-			i++;										// Buying Time for Delay Execution
-			movesNum.classList.remove("active");
-			repeatBtn.removeAttribute("disabled");
-			stepCountBtn.classList.add("active");
+			i++;											// Buying Time for animation
+			movesNum.classList.remove("active");			// Hide total move no. count
+			repeatBtn.removeAttribute("disabled");			// Allow user to repeat step
+			stepCountBtn.classList.add("active");			// Count current step number
 			console.log("Clicked Next Button");
 			let async = true;
-			// if(forwardIndex < props.movesAlgo.forwardAlgo.length)
-			// {
-			// 	// nextBtn.setAttribute('disabled', '');
-			// 	setStepCount(prevCount => prevCount + 1);
-			// 	setTimeout(() =>
-			// 	{
-			// 		applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
-			// 		forwardIndex++;
-			// 		i--;
-			// 	}, (delay * i));
-			// }
-			// else
-			// {
-			// 	console.log("Cube Solved...CONGRATULATIONS!!!");
-			// }
 			setTimeout(() => {
 				if (forwardIndex < props.movesAlgo.forwardAlgo.length) {
-					// nextBtn.setAttribute('disabled', '');
+					// "nextMove()" is used by "repeatMove()" as well. 
 					if(!repeat) 
 					{
+						// Increment step count if it's not a repeat case
 						setStepCount((prevCount) => prevCount + 1);
 					}
+					// Perform next move animation
 					applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
 					forwardIndex++;
+					// Allow user to goto previous step if atleast 2 moves are done
 					if(forwardIndex >= 2)
 					{
 						prevBtn.removeAttribute("disabled");
@@ -584,23 +570,29 @@ function Solver(props) {
 				}
 			}, delay * i);
 		}
+		// Repeats the recent move
 		function repeatMove()
 		{
 			let async = false, repeat = true;
+			// Reverse recent move 
 			let reverseStepIndex = props.movesAlgo.reverseAlgo.length - (forwardIndex);
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			forwardIndex--;
+			// Re-animate the move smoothly
 			nextMove(repeat);
 		}
+		// Takes user to previous step 
 		function previousMove()
 		{
 			let async = false, repeat = false;
+			// Reverse 2 step moves
 			let reverseStepIndex = props.movesAlgo.reverseAlgo.length - (forwardIndex);
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			reverseStepIndex++;
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			forwardIndex -= 2;
-			setStepCount((prevCount) => prevCount - 2);
+			setStepCount((prevCount) => prevCount - 2);			// Decrement step count
+			// Re-animate one move smoothly
 			nextMove(repeat);
 		}
 		prevBtn.addEventListener("click", previousMove);
@@ -608,7 +600,7 @@ function Solver(props) {
 		repeatBtn.addEventListener("click", repeatMove);
 	}, []);
 
-
+	// 3D Structure of cube with UI
 	return (
 		<div className={`cube__container${solverStyle}`}>
 			<div className="step__count flex__center--row">{`Step: ${stepCount}`}</div>
@@ -879,9 +871,6 @@ function Solver(props) {
 			<button className="next__move--btn" disabled>
 				Next
 			</button>
-			{/* <Helmet>
-        		<script src="../src/components/solver/script.js" />
-      		</Helmet> */}
 		</div>
 	);
 }

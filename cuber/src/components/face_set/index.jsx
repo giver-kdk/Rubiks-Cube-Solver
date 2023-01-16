@@ -1,35 +1,39 @@
 import React from 'react'
 import Face from "./face"
 import { useState } from 'react';
-import solver from "rubiks-cube-solver";
+import solver from "rubiks-cube-solver";			
 import "./style.css"
 
+// Structure for face color input page
 export default function FaceSet(props)
 {
 	let [movesNum, setMovesNum] = useState(0);
+	// Solves cubes and generates output text(Steps to solve)
 	function solveCube()
 	{
+		// Convert color into corresponding side 
 			function color_to_side(colors) {
 				let sideValue = colors.map((color) => {
 					let result = "f";
 					switch (color) {
+						// "green" is in front face. So, its side is "f"
 						case "green":
 							result = "f";
 							break;
 						case "red":
-							result = "r";
+							result = "r";					// "r" is right face
 							break;
 						case "white":
-							result = "u";
+							result = "u";					// "u" is upper face
 							break;
 						case "yellow":
-							result = "d";
+							result = "d";					// "d" is down face
 							break;
 						case "orange":
-							result = "l";
+							result = "l";					// "l" is left face
 							break;
 						case "blue":
-							result = "b";
+							result = "b";					// "b" is back face
 							break;
 						default:
 							console.log(
@@ -40,19 +44,14 @@ export default function FaceSet(props)
 				});
 				return sideValue;
 			}
-			// let w = "u",
-			// 	g = "f",
-			// 	r = "r",
-			// 	o = "l",
-			// 	b = "b",
-			// 	y = "d";
+			// Collect the side names into separate variables
 			let frontFace = color_to_side(props.cubeColorState.front).join("");
 			let rightFace = color_to_side(props.cubeColorState.right).join("");
 			let upperFace = color_to_side(props.cubeColorState.upper).join("");
 			let downFace = color_to_side(props.cubeColorState.down).join("");
 			let leftFace = color_to_side(props.cubeColorState.left).join("");
 			let backFace = color_to_side(props.cubeColorState.back).join("");
-	
+			// Merge the collected side names into an array
 			let cubeState = [
 				frontFace,
 				rightFace,
@@ -61,9 +60,11 @@ export default function FaceSet(props)
 				leftFace,
 				backFace,
 			].join("");
-	
+			// Side names are merged to make a proper input format for "solver" 
+			// "solver" solves "cubeState" and generates output text as forward algorithm
 			let solveMoves = solver(cubeState).split(" ");
 			console.log(solveMoves);
+			// Convert forward algorithm into reverse algorithm and store
 			let reverseMoves = solveMoves.map((move) => {
 				if(move.includes("2"))
 					return move;
@@ -72,8 +73,11 @@ export default function FaceSet(props)
 				else
 					return (move + "prime");
 			}).reverse();
+			// Now, algorithm is stored in "App.jsx" from here
 			props.setAlgo({solveMoves, reverseMoves});
-			setMovesNum(solveMoves.length);
+			// Set no. of moves needed
+			setMovesNum(solveMoves.length);	
+			// Take user to next page
 			props.handleClick();
 	}
 	return (

@@ -7,14 +7,14 @@ import Position from "./components/positioning";
 import Solver from "./components/solver/";
 
 function App() {
+	// Define default color array for each cube face in a solved state
 	let frontColor = ['green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'green'];
 	let rightColor = ['red', 'red', 'red', 'red', 'red', 'red', 'red', 'red', 'red'];
 	let upperColor = ['white', 'white', 'white', 'white', 'white', 'white', 'white', 'white', 'white'];
 	let downColor = ['yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow'];
 	let leftColor = ['orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange'];
 	let backColor = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'];
-	let [pageVisibility, setPageVisibility] = useState([true, false, false, false, false]);
-	// "faceColor" is an Object containing "Objects" inside it
+	// "inputFaceColors" object wraps-up above "color array" inside it
 	let [inputFaceColors, setInputFaceColor] = useState(
 		{
 			front: frontColor,
@@ -24,24 +24,45 @@ function App() {
 			left: leftColor,
 			back: backColor
 		}
-	);
+		);
+	// "algoResult" stores forward and backward algorithm outputs
 	let [algoResult, setAlgoResult] = useState(
 		{
 			forwardAlgo: [],
 			reverseAlgo: []
 		}
-	);
+		);
+	/* There are 5 pages in the app and only one page should be visible at once.
+	So, "pageVisibility" array says which page to show at a time.
+	Initially, only 1st page is "true" (Visible) */
+	let [pageVisibility, setPageVisibility] = useState([true, false, false, false, false]);
+
+	// Clicking to "Start" button of 1st page takes user to 2nd page
 	function handleStart()
 	{
 		console.log("started");
 		setPageVisibility([false, true, false, false, false]);
 	}
+	// Takes user to 3rd page
+	function handlePosition()
+	{
+		console.log("Position Ran");
+		setPageVisibility([false, false, true, false, false]);
+	}
+	// Takes user to 4th page
+	function handleFaceInput()
+	{
+		console.log("Face Input Ran");
+		setPageVisibility([false, false, false, true, false]);
+	}
+	// Set respective face color according to user input from keyboard
 	function handleFaceSet(e)
 	{
 		console.log("Face Set Ran");
-		let name = e.target.name;
-		let value = e.target.value;
+		let name = e.target.name;					// Get name of selected face(Total 6 faces)
+		let value = e.target.value;					// Get string typed by user on input field
 		let finalValue = [];
+		// At first, store default color array for selected face
 		switch(name)
 		{
 			case "front":
@@ -64,11 +85,12 @@ function App() {
 				break;
 			default:
 				console.log("Color Assignment Error");
-		}
+			}
+		// Now, modify above default color array according to input string
 		finalValue = finalValue.map((color, index) =>
 			{
 				let finalColor = color;
-				if(index < value.length)
+				if(index < value.length)			// "value" contains input string
 				{
 					switch(value[index])
 					{
@@ -95,36 +117,30 @@ function App() {
 	
 					}
 				}
+				// 4th index is center of a face whose color is always constant
+				// It should always be set to default color, independent to user input
 				if(index == 4)
 				{
 					finalColor = color;
 				}
 				return finalColor;
 			});
-		// Use [] inside object if "key" is a variable
-		setInputFaceColor(prevInputColor =>
-			{
-				return {
+			// Finally, assign modified color array on selected face
+			setInputFaceColor(prevInputColor =>
+				{
+					return {
 					...prevInputColor,
+					// Use [] inside object if "key" is a variable
 					[name]: finalValue
 				}
 			});
 	}
-	function handlePosition()
-	{
-		console.log("Position Ran");
-		setPageVisibility([false, false, true, false, false]);
-	}
-	function handleFaceInput()
-	{
-		console.log("Face Input Ran");
-		setPageVisibility([false, false, false, true, false]);
-	}
+	// Start of solver 
 	function handleSolver()
 	{
 		console.log("Solver Ran");
 	}
-	
+	// Update "algoResult" according to generated steps for solving cube
 	function handleAlgoResult(algo)
 	{
 		console.log("Algo Set Ran");
@@ -132,10 +148,11 @@ function App() {
 		let reverse = algo.reverseMoves;
 		setAlgoResult({forwardAlgo: forward, reverseAlgo: reverse});
 	}
-	// console.log(algoResult);
+	// console.log(algoResult.forwardAlgo);			
 	return (
 		<div className="App">
 			<div className="app__container">
+				{/* Conditional rendering of pages according to "pageVisibility" array */}
 				{pageVisibility[0] && <Start handleClick={handleStart}/>}
 				{pageVisibility[1] && <Position handleClick={handlePosition} />}
 				{pageVisibility[2] && <FaceSet handleClick={handleFaceInput} handleChange={handleFaceSet} colors={inputFaceColors} setAlgo={(algo) => handleAlgoResult(algo)} cubeColorState={inputFaceColors}/>}

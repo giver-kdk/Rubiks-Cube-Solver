@@ -1,11 +1,9 @@
 import React from "react";
 import cube_pos from "./cube_position.png";
 import axis from "./3D_axis.png";
-// import solver from "rubiks-cube-solver";
 import "./style.css";
-// import { useState } from "react";
-// import { useEffect } from "react";
 
+// Structure of orientation guide page
 export default function Position(props) {
 	return (
 		<div className="position__container flex__center--col">

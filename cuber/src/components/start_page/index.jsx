@@ -2,6 +2,7 @@ import React from 'react'
 import cube_start from "./cube_start.png"
 import "./style.css"
 
+// Structure of 1st Page
 export default function Start(props)
 {
 	return (
