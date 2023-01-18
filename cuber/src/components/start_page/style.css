@@ -4,6 +4,10 @@
 	/* border: 2px solid red; */
 	height: 100%;
 	width: 100%;
+	background: radial-gradient(circle,
+	#A5EBE9, 
+	#4CA9B6 
+  ); 
 }
 .start__heading
 {
@@ -51,15 +55,18 @@
 	font-size: large;
 	font-weight: medium;
 	filter: drop-shadow(0px 10px 10px rgb(209, 209, 209));
+	filter: drop-shadow(0px 10px 10px #489da9);
 	transition: all 0.15s ease-in;
 	position: absolute;
 	bottom: 2rem;
 	left: 50%;
 	transform: translateX(-50%);
+	border: 1px solid grey;
+
 }
 .start__btn:hover
 {
 	cursor: pointer;
 	background-color: rgb(255, 28, 100);
-	filter: drop-shadow(0px 10px 10px rgb(183, 183, 183));
+	filter: drop-shadow(0px 10px 10px #397e87);
 }

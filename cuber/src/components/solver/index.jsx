@@ -1,15 +1,19 @@
 import "./style.css";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import Confetti from "react-confetti"
 
 // Reverses cube state to user's cube state and solves using step-wise animation
 function Solver(props) {
 	// Moving to next step while solving cube is asynchronous process
 	// If user clicks "Next" at faster rate, some extra time is needed to animate previous steps
 	// Here, "i" is the factor for amount of time to be reserved for the animation(waiting duration)
-	let delay = 500, i = 0;
-	let reverseIndex = 0, forwardIndex = 0;
+	let delay = 500,
+		i = 0;
+	let reverseIndex = 0,
+		forwardIndex = 0;
 	let solverStyle = "";
+	let [cubeSolved, setCubeSolved] = useState(false);
 	let [stepCount, setStepCount] = useState(0);
 	let [moveMessage, setMoveMessage] = useState(
 		"Syncing the cube state with yours...🪄"
@@ -23,12 +27,14 @@ function Solver(props) {
 		left: 5,
 		back: 0,
 	});
-	
+
 	// Start reverse and forward algorithm animation after component is mounted
 	useEffect(() => {
 		console.log("Script Started");
 		let movesNum = document.querySelector(".moves__num");
 		let stepCountBtn = document.querySelector(".step__count");
+		let scrambleError = document.querySelector(".scramble__error");
+		let retryBtn = document.querySelector(".retry__btn--scramble");
 		let repeatBtn = document.querySelector(".repeat__btn");
 		let prevBtn = document.querySelector(".previous__btn");
 		let nextBtn = document.querySelector(".next__move--btn");
@@ -47,7 +53,7 @@ function Solver(props) {
 		}
 		// Get face axis for rotation: X, Y or Z
 		function getAxis(face) {
-			return String.fromCharCode("X".charCodeAt(0) + face / 2); 
+			return String.fromCharCode("X".charCodeAt(0) + face / 2);
 		}
 
 		// Moves each of 26 pieces to their places, assigns IDs and attaches stickers
@@ -215,7 +221,7 @@ function Solver(props) {
 		function rotateBack(clockwise, async) {
 			animateRotation(orientation.back, clockwise, Date.now(), async);
 		}
-		
+
 		// Entire Cube Rotation Logic Functions
 		var startXYZ = pivot.style.transform.match(/-?\d+\.?\d*/g).map(Number);
 		let startX = 0;
@@ -303,12 +309,12 @@ function Solver(props) {
 		*/
 		// Rotate 2 front faces
 		function rotateFrontDual(clockwise, async) {
-			if(async) i++;								// Buying(Reserving) More Time
+			if (async) i++; // Buying(Reserving) More Time
 			rotateBack(clockwise, async);
 			if (async) {
 				setTimeout(() => {
 					turnX(clockwise);
-					i--;								// Freeing the reserved time
+					i--; // Freeing the reserved time
 				}, delay);
 			} else {
 				turnX(clockwise);
@@ -316,7 +322,7 @@ function Solver(props) {
 		}
 		// Rotate 2 right faces
 		function rotateRightDual(clockwise, async) {
-			if(async) i++;
+			if (async) i++;
 			rotateLeft(clockwise, async);
 			if (async) {
 				setTimeout(() => {
@@ -329,7 +335,7 @@ function Solver(props) {
 		}
 		// Rotate 2 upper faces
 		function rotateUpperDual(clockwise, async) {
-			if(async) i++;
+			if (async) i++;
 			rotateDown(clockwise, async);
 			if (async) {
 				setTimeout(() => {
@@ -342,7 +348,7 @@ function Solver(props) {
 		}
 		// Rotate 2 down faces
 		function rotateDownDual(clockwise, async) {
-			if(async) i++;
+			if (async) i++;
 			rotateUpper(clockwise, async);
 			if (async) {
 				setTimeout(() => {
@@ -355,7 +361,7 @@ function Solver(props) {
 		}
 		// Rotate 2 left faces
 		function rotateLeftDual(clockwise, async) {
-			if(async) i++;
+			if (async) i++;
 			rotateRight(clockwise, async);
 			if (async) {
 				setTimeout(() => {
@@ -368,7 +374,7 @@ function Solver(props) {
 		}
 		// Rotate 2 back faces
 		function rotateBackDual(clockwise, async) {
-			if(async) i++;
+			if (async) i++;
 			rotateFront(clockwise, async);
 			if (async) {
 				setTimeout(() => {
@@ -387,15 +393,15 @@ function Solver(props) {
 		*/
 		// Rotate Z-axis middle layer
 		function rotateM(clockwise, async) {
-			if(async) i+=2;								// Buying(Reserving) Double Time for two Asynchronous Moves
+			if (async) i += 2; // Buying(Reserving) Double Time for two Asynchronous Moves
 			rotateRight(clockwise, async);
 			if (async) {
 				setTimeout(() => {
 					rotateLeft(!clockwise, async);
-					i--;								// Freeing 1st bought Time
+					i--; // Freeing 1st bought Time
 					setTimeout(() => {
 						turnZ(!clockwise);
-						i--;							// Freeing 2nd bought Time
+						i--; // Freeing 2nd bought Time
 					}, delay);
 				}, delay);
 			} else {
@@ -405,7 +411,7 @@ function Solver(props) {
 		}
 		// Rotate Y-axis middle layer
 		function rotateE(clockwise, async) {
-			if(async) i+=2;
+			if (async) i += 2;
 			rotateUpper(clockwise, async);
 			if (async) {
 				setTimeout(() => {
@@ -423,7 +429,7 @@ function Solver(props) {
 		}
 		// Rotate X-axis middle layer
 		function rotateS(clockwise, async) {
-			if(async) i+=2;
+			if (async) i += 2;
 			rotateFront(!clockwise, async);
 			if (async) {
 				setTimeout(() => {
@@ -490,7 +496,7 @@ function Solver(props) {
 						console.log("Move Function Conversion Error");
 				}
 			};
-			moveFunction();					// Apply the rotation
+			moveFunction(); // Apply the rotation
 			// Apply rotation again if move includes 2 rotations
 			if (move.includes("2")) {
 				if (async) {
@@ -504,7 +510,20 @@ function Solver(props) {
 				}
 			}
 		}
-
+		assembleCube();
+		// Error Handling for Stack Size Limitation
+		window.onerror = function (message, file, line, col, error) {
+			if (
+				error.name === "RangeError" &&
+				error.message === "Maximum call stack size exceeded"
+			) {
+				console.log("Solver Message: Maximum call stack size exceeded");
+				scrambleError.classList.add("active");
+				retryBtn.classList.add("active");
+			} else {
+				throw error;
+			}
+		};
 		// Cube Scramble with Reverse Algorithm Execution
 		function scramble_cube() {
 			movesNum.classList.remove("active");
@@ -513,7 +532,7 @@ function Solver(props) {
 			prevBtn.setAttribute("disabled", "");
 			repeatBtn.setAttribute("disabled", "");
 			nextBtn.setAttribute("disabled", "");
-			let async = false;				// Scramble should not be smooth
+			let async = false; // Scramble should not be smooth
 			// Recursively scramble until reverse algorithm finishes
 			setTimeout(() => {
 				applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
@@ -530,24 +549,31 @@ function Solver(props) {
 			}, 10);
 		}
 		scramble_cube();
+		function reScramble()
+		{
+			reverseIndex = 0;
+			retryBtn.classList.remove("active");
+			scrambleError.classList.remove("active");
+			scramble_cube();
+			assembleCube();
+		}
 		document.ondragstart = function () {
 			return false;
 		};
 		// scene.addEventListener("mousedown", mousedown);
-		assembleCube();
+		// assembleCube();
 		// Animates next move
 		function nextMove(repeat = false) {
-			i++;											// Buying Time for animation
-			movesNum.classList.remove("active");			// Hide total move no. count
-			repeatBtn.removeAttribute("disabled");			// Allow user to repeat step
-			stepCountBtn.classList.add("active");			// Count current step number
+			i++; // Buying Time for animation
+			movesNum.classList.remove("active"); // Hide total move no. count
+			repeatBtn.removeAttribute("disabled"); // Allow user to repeat step
+			stepCountBtn.classList.add("active"); // Count current step number
 			console.log("Clicked Next Button");
 			let async = true;
 			setTimeout(() => {
 				if (forwardIndex < props.movesAlgo.forwardAlgo.length) {
-					// "nextMove()" is used by "repeatMove()" as well. 
-					if(!repeat) 
-					{
+					// "nextMove()" is used by "repeatMove()" as well.
+					if (!repeat) {
 						// Increment step count if it's not a repeat case
 						setStepCount((prevCount) => prevCount + 1);
 					}
@@ -555,49 +581,69 @@ function Solver(props) {
 					applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
 					forwardIndex++;
 					// Allow user to goto previous step if atleast 2 moves are done
-					if(forwardIndex >= 2)
-					{
+					if (forwardIndex >= 2) {
 						prevBtn.removeAttribute("disabled");
-					}
-					else
-					{
+					} else {
 						prevBtn.setAttribute("disabled", "");
-
 					}
-					i--;									// Freeing bought Time for next Move
+					i--; // Freeing bought Time for next Move
 				} else {
 					console.log("Cube Solved...CONGRATULATIONS!!!");
+					setCubeSolved(true);
 				}
 			}, delay * i);
 		}
 		// Repeats the recent move
-		function repeatMove()
-		{
-			let async = false, repeat = true;
-			// Reverse recent move 
-			let reverseStepIndex = props.movesAlgo.reverseAlgo.length - (forwardIndex);
+		function repeatMove() {
+			let async = false,
+				repeat = true;
+			// Reverse recent move
+			let reverseStepIndex =
+				props.movesAlgo.reverseAlgo.length - forwardIndex;
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			forwardIndex--;
 			// Re-animate the move smoothly
 			nextMove(repeat);
 		}
-		// Takes user to previous step 
-		function previousMove()
-		{
-			let async = false, repeat = false;
+		// Takes user to previous step
+		function previousMove() {
+			let async = false,
+				repeat = false;
 			// Reverse 2 step moves
-			let reverseStepIndex = props.movesAlgo.reverseAlgo.length - (forwardIndex);
+			let reverseStepIndex =
+				props.movesAlgo.reverseAlgo.length - forwardIndex;
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			reverseStepIndex++;
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			forwardIndex -= 2;
-			setStepCount((prevCount) => prevCount - 2);			// Decrement step count
+			setStepCount((prevCount) => prevCount - 2); // Decrement step count
 			// Re-animate one move smoothly
 			nextMove(repeat);
 		}
+		retryBtn.addEventListener("click", reScramble);
 		prevBtn.addEventListener("click", previousMove);
 		nextBtn.addEventListener("click", (e) => nextMove(false));
 		repeatBtn.addEventListener("click", repeatMove);
+		
+		return () =>
+		{
+			console.log("Solver Component Unmounted");
+			
+			forwardIndex = 0;
+			reverseIndex = 0;
+			retryBtn.classList.remove("active");
+			scrambleError.classList.remove("active");
+
+			prevBtn.setAttribute("disabled", "");
+			repeatBtn.setAttribute("disabled", "");
+			nextBtn.setAttribute("disabled", "");
+			// setStepCount(0);
+			// setCubeSolved(false);
+			retryBtn.removeEventListener("click", reScramble);
+			prevBtn.removeEventListener("click", previousMove);
+			nextBtn.removeEventListener("click", (e) => nextMove(false));
+			repeatBtn.removeEventListener("click", repeatMove);
+		}
 	}, []);
 
 	// 3D Structure of cube with UI
@@ -606,6 +652,9 @@ function Solver(props) {
 			<div className="step__count flex__center--row">{`Step: ${stepCount}`}</div>
 			<div className="move__name">{moveMessage}</div>
 			<div className="moves__num">{`${props.movesAlgo.forwardAlgo.length} moves needed`}</div>
+			<div className="scramble__error">Memory consumption is high. Please try again!</div>
+			<button className="retry__btn--scramble">Retry</button>
+			{cubeSolved && <Confetti/>}
 			<div className="scene" id="scene">
 				<div
 					className="pivot centered"

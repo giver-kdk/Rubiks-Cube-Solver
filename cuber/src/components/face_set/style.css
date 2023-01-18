@@ -1,11 +1,16 @@
 .face__set--section
 {
-	height: fit-content;
+	/* height: fit-content; */
 	/* border: 2px solid red; */
-	/* height: 95vh; */
+	height: 100vh;
 	justify-content: space-between;
 	flex-wrap: nowrap;
 	padding: 1rem 0;
+	padding-bottom: 4rem;
+	background: radial-gradient(circle,
+	#A5EBE9, 
+	#4CA9B6 
+	); 
 }
 .face__set--container
 {
@@ -13,6 +18,7 @@
 	/* border: 2px solid red; */
 	width: 60%;
 	margin: auto;
+	
 }
 .face__set--body
 {
@@ -106,8 +112,15 @@
 {
 	color: #2F2F31;
 }
+.color__value--container
+{
+	background-color: white;
+	border-radius: 7px;
+}
 .example__colors
 {
+	background-color: white;
+	border-radius: 7px;
 	width: 150px;
 }
 .example__item
@@ -132,6 +145,8 @@
 	font-size: large;
 	font-weight: medium;
 	filter: drop-shadow(0px 10px 10px rgb(209, 209, 209));
+	filter: drop-shadow(0px 10px 10px #489da9);
+	border: 1px solid grey;
 	transition: all 0.15s ease-in;
 	position: absolute;
 	bottom: 2rem;
@@ -142,4 +157,6 @@
 	cursor: pointer;
 	background-color: rgb(255, 28, 100);
 	filter: drop-shadow(0px 10px 10px rgb(183, 183, 183));
+	filter: drop-shadow(0px 10px 10px #397e87);
+
 }
