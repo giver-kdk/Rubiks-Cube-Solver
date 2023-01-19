@@ -115,6 +115,39 @@ function Solver(props) {
 		}
 
 		// Animates rotation of the face (by clockwise if cw), and then swaps stickers
+		// function animateRotation(face, cw, currentTime, async = true) {
+		// 	var k = 0.3 * ((face % 2) * 2 - 1) * (2 * cw - 1),
+		// 		qubes = Array(9)
+		// 			.fill(pieces[face])
+		// 			.map(function (value, index) {
+		// 				return index
+		// 					? getPieceBy(face, index / 2, index % 2)
+		// 					: value;
+		// 			});
+		// 	(function rotatePieces() {
+		// 		var passed = Date.now() - currentTime,
+		// 			style =
+		// 				"rotate" +
+		// 				getAxis(face) +
+		// 				"(" +
+		// 				k * passed * (passed < 300) +
+		// 				"deg)";
+		// 		qubes.forEach(function (piece) {
+		// 			piece.style.transform = piece.style.transform.replace(
+		// 				/rotate.\(\S+\)/,
+		// 				style
+		// 			);
+		// 		});
+		// 		if (passed >= 300) return swapPieces(face, 3 - 2 * cw);
+		// 		if (async) {
+		// 			// Does smooth animation for forward algo
+		// 			requestAnimationFrame(rotatePieces);
+		// 		} else {
+		// 			// Does fast animation for reverse algo
+		// 			rotatePieces();
+		// 		}
+		// 	})();
+		// }
 		function animateRotation(face, cw, currentTime, async = true) {
 			var k = 0.3 * ((face % 2) * 2 - 1) * (2 * cw - 1),
 				qubes = Array(9)
@@ -124,31 +157,72 @@ function Solver(props) {
 							? getPieceBy(face, index / 2, index % 2)
 							: value;
 					});
-			(function rotatePieces() {
-				var passed = Date.now() - currentTime,
-					style =
-						"rotate" +
-						getAxis(face) +
-						"(" +
-						k * passed * (passed < 300) +
-						"deg)";
-				qubes.forEach(function (piece) {
-					piece.style.transform = piece.style.transform.replace(
-						/rotate.\(\S+\)/,
-						style
-					);
-				});
-				if (passed >= 300) return swapPieces(face, 3 - 2 * cw);
-				if (async) {
+			if(async)
+			{
+				(function rotatePieces() {
+					var passed = Date.now() - currentTime,
+						style =
+							"rotate" +
+							getAxis(face) +
+							"(" +
+							k * passed * (passed < 300) +
+							"deg)";
+					qubes.forEach(function (piece) {
+						piece.style.transform = piece.style.transform.replace(
+							/rotate.\(\S+\)/,
+							style
+						);
+					});
+					if (passed >= 300) return swapPieces(face, 3 - 2 * cw);
 					// Does smooth animation for forward algo
 					requestAnimationFrame(rotatePieces);
-				} else {
-					// Does fast animation for reverse algo
-					rotatePieces();
-				}
-			})();
+				})();
+			}
+			else
+			{
+				(function rotatePieces() {
+					var style =
+							"rotate" +
+							getAxis(face) +
+							"(" +
+							300
+							"deg)";
+					qubes.forEach(function (piece) {
+						piece.style.transform = piece.style.transform.replace(
+							/rotate.\(\S+\)/,
+							style
+						);
+					});
+					swapPieces(face, 3 - 2 * cw);
+				})();
+			}
 		}
-
+		// function quickRotation(face, cw, currentTime, async = true)
+		// {
+		// 	var k = 0.3 * ((face % 2) * 2 - 1) * (2 * cw - 1),
+		// 		qubes = Array(9)
+		// 			.fill(pieces[face])
+		// 			.map(function (value, index) {
+		// 				return index
+		// 					? getPieceBy(face, index / 2, index % 2)
+		// 					: value;
+		// 			});
+		// 	(function rotatePieces() {
+		// 		var style =
+		// 				"rotate" +
+		// 				getAxis(face) +
+		// 				"(" +
+		// 				k * passed * (passed < 300) +
+		// 				"deg)";
+		// 		qubes.forEach(function (piece) {
+		// 			piece.style.transform = piece.style.transform.replace(
+		// 				/rotate.\(\S+\)/,
+		// 				style
+		// 			);
+		// 		});
+		// 		swapPieces(face, 3 - 2 * cw);
+		// 	})();
+		// }
 		// Events
 		// function mousedown(md_e) {
 		// 	// Side Rotation Logic
@@ -525,6 +599,29 @@ function Solver(props) {
 			}
 		};
 		// Cube Scramble with Reverse Algorithm Execution
+		// function scramble_cube() {
+		// 	movesNum.classList.remove("active");
+		// 	stepCountBtn.classList.remove("active");
+		// 	// Initially, "Previous", "Repeat" and "Next" are disabled
+		// 	prevBtn.setAttribute("disabled", "");
+		// 	repeatBtn.setAttribute("disabled", "");
+		// 	nextBtn.setAttribute("disabled", "");
+		// 	let async = false; // Scramble should not be smooth
+		// 	// Recursively scramble until reverse algorithm finishes
+		// 	setTimeout(() => {
+		// 		applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
+		// 		if (reverseIndex < props.movesAlgo.reverseAlgo.length - 1) {
+		// 			reverseIndex++;
+		// 			scramble_cube();
+		// 		} else {
+		// 			// Allow user to move to next page
+		// 			movesNum.classList.add("active");
+		// 			nextBtn.removeAttribute("disabled");
+		// 			setMoveMessage(`Orient your cube as shown here to solve.`);
+		// 			return;
+		// 		}
+		// 	}, 10);
+		// }
 		function scramble_cube() {
 			movesNum.classList.remove("active");
 			stepCountBtn.classList.remove("active");
@@ -533,20 +630,31 @@ function Solver(props) {
 			repeatBtn.setAttribute("disabled", "");
 			nextBtn.setAttribute("disabled", "");
 			let async = false; // Scramble should not be smooth
-			// Recursively scramble until reverse algorithm finishes
-			setTimeout(() => {
-				applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
-				if (reverseIndex < props.movesAlgo.reverseAlgo.length - 1) {
-					reverseIndex++;
-					scramble_cube();
-				} else {
-					// Allow user to move to next page
-					movesNum.classList.add("active");
-					nextBtn.removeAttribute("disabled");
-					setMoveMessage(`Orient your cube as shown here to solve.`);
-					return;
+			setTimeout(() =>
+			{
+				for(reverseIndex = 0; reverseIndex <= props.movesAlgo.reverseAlgo.length - 1; reverseIndex++)
+				{
+					applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
+					
 				}
-			}, 10);
+				movesNum.classList.add("active");
+				nextBtn.removeAttribute("disabled");
+				setMoveMessage(`Orient your cube as shown here to solve.`);
+
+			}, 1000);
+			// setTimeout(() => {
+			// 	applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
+			// 	if (reverseIndex < props.movesAlgo.reverseAlgo.length - 1) {
+			// 		reverseIndex++;
+			// 		scramble_cube();
+			// 	} else {
+			// 		// Allow user to move to next page
+			// 		movesNum.classList.add("active");
+			// 		nextBtn.removeAttribute("disabled");
+			// 		setMoveMessage(`Orient your cube as shown here to solve.`);
+			// 		return;
+			// 	}
+			// }, 10);
 		}
 		scramble_cube();
 		function reScramble()
