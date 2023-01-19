@@ -3,7 +3,7 @@
 	/* height: fit-content; */
 	/* border: 2px solid red; */
 	height: 100vh;
-	justify-content: space-between;
+	/* justify-content: space-between; */
 	flex-wrap: nowrap;
 	padding: 1rem 0;
 	padding-bottom: 4rem;
@@ -24,6 +24,7 @@
 {
 	padding: 0.3rem;
 	/* height: 100vh; */
+	/* border: 2px solid red; */
 }
 .face__info
 {
@@ -41,6 +42,7 @@
 }
 .face__set--title
 {
+	/* border: 2px solid red; */
 	color: black;
 	font-size: 27px;
 	font-weight: 500;
