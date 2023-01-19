@@ -19,14 +19,23 @@ function Solver(props) {
 		"Syncing the cube state with yours...🪄"
 	);
 	// Orientaion is denoted by integers. If cube orientation changes, integer value is updated
-	let [orientation, setOrientation] = useState({
+	// let [orientation, setOrientation] = useState({
+	// 	front: 1,
+	// 	right: 4,
+	// 	upper: 2,
+	// 	down: 3,
+	// 	left: 5,
+	// 	back: 0,
+	// });
+	let orientation =
+	{
 		front: 1,
 		right: 4,
 		upper: 2,
 		down: 3,
 		left: 5,
 		back: 0,
-	});
+	};
 
 	// Start reverse and forward algorithm animation after component is mounted
 	useEffect(() => {
@@ -243,81 +252,163 @@ function Solver(props) {
 		var startXYZ = pivot.style.transform.match(/-?\d+\.?\d*/g).map(Number);
 		let startX = 0;
 		// Rotate entire cube about X-axis
-		function turnX(clockwise) {
+		function turnX(clockwise, async = true) {
 			// Perform rotation using CSS
 			if (clockwise) startX = startX + 90;
 			else startX = startX - 90;
+			if(async)
+			{
+				pivot.style.transition = "all 0.5s ease-in-out";
+			}
+			else
+			{
+				pivot.style.transition = "all 0s ease-in-out";
+			}
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg) rotate3d(1,0,0,${startX}deg)`;
 			// Orientation is changed. So, update "orientation" value
-			setOrientation((prevOrientation) => {
-				if (clockwise) {
-					return {
-						...prevOrientation,
-						right: prevOrientation.upper,
-						upper: prevOrientation.left,
-						down: prevOrientation.right,
-						left: prevOrientation.down,
-					};
-				} else {
-					return {
-						...prevOrientation,
-						right: prevOrientation.down,
-						upper: prevOrientation.right,
-						down: prevOrientation.left,
-						left: prevOrientation.upper,
-					};
-				}
-			});
+			// setOrientation((prevOrientation) => {
+			// 	if (clockwise) {
+			// 		return {
+			// 			...prevOrientation,
+			// 			right: prevOrientation.upper,
+			// 			upper: prevOrientation.left,
+			// 			down: prevOrientation.right,
+			// 			left: prevOrientation.down,
+			// 		};
+			// 	} else {
+			// 		return {
+			// 			...prevOrientation,
+			// 			right: prevOrientation.down,
+			// 			upper: prevOrientation.right,
+			// 			down: prevOrientation.left,
+			// 			left: prevOrientation.upper,
+			// 		};
+			// 	}
+			// });
+			let prevOrientation = orientation;
+			
+			if (clockwise) {
+			orientation =  {
+					...prevOrientation,
+					right: prevOrientation.upper,
+					upper: prevOrientation.left,
+					down: prevOrientation.right,
+					left: prevOrientation.down,
+				};
+			} else {
+			orientation = {
+					...prevOrientation,
+					right: prevOrientation.down,
+					upper: prevOrientation.right,
+					down: prevOrientation.left,
+					left: prevOrientation.upper,
+				};
+			}
 		}
 		// Rotate entire cube about Y-axis
-		function turnY(clockwise) {
+		function turnY(clockwise, async = true) {
 			if (clockwise) startXYZ[1] = startXYZ[1] - 90;
 			else startXYZ[1] = startXYZ[1] + 90;
+
+			if(async)
+			{
+				pivot.style.transition = "all 0.5s ease-in-out";
+			}
+			else
+			{
+				pivot.style.transition = "all 0s ease-in-out";
+			}
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg)`;
-			setOrientation((prevOrientation) => {
-				if (clockwise) {
-					return {
-						...prevOrientation,
-						front: prevOrientation.right,
-						right: prevOrientation.back,
-						left: prevOrientation.front,
-						back: prevOrientation.left,
-					};
-				} else {
-					return {
-						...prevOrientation,
-						front: prevOrientation.left,
-						right: prevOrientation.front,
-						left: prevOrientation.back,
-						back: prevOrientation.right,
-					};
-				}
-			});
+			// setOrientation((prevOrientation) => {
+			// 	if (clockwise) {
+			// 		return {
+			// 			...prevOrientation,
+			// 			front: prevOrientation.right,
+			// 			right: prevOrientation.back,
+			// 			left: prevOrientation.front,
+			// 			back: prevOrientation.left,
+			// 		};
+			// 	} else {
+			// 		return {
+			// 			...prevOrientation,
+			// 			front: prevOrientation.left,
+			// 			right: prevOrientation.front,
+			// 			left: prevOrientation.back,
+			// 			back: prevOrientation.right,
+			// 		};
+			// 	}
+			// });
+			let prevOrientation = orientation;
+			
+			if (clockwise) {
+			orientation =  {
+					...prevOrientation,
+					front: prevOrientation.right,
+					right: prevOrientation.back,
+					left: prevOrientation.front,
+					back: prevOrientation.left,
+				};
+			} else {
+			orientation = {
+					...prevOrientation,
+					front: prevOrientation.left,
+					right: prevOrientation.front,
+					left: prevOrientation.back,
+					back: prevOrientation.right,
+				};
+			}
 		}
 		// Rotate entire cube about Z-axis
-		function turnZ(clockwise) {
+		function turnZ(clockwise, async = true) {
 			if (clockwise) startXYZ[2] = startXYZ[2] - 90;
 			else startXYZ[2] = startXYZ[2] + 90;
+			if(async)
+			{
+				pivot.style.transition = "all 0.5s ease-in-out";
+			}
+			else
+			{
+				pivot.style.transition = "all 0s ease-in-out";
+			}
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg)`;
-			setOrientation((prevOrientation) => {
-				if (clockwise) {
-					return {
-						...prevOrientation,
-						front: prevOrientation.down,
-						upper: prevOrientation.front,
-						down: prevOrientation.back,
-						back: prevOrientation.upper,
-					};
-				} else {
-					return {
-						...prevOrientation,
-						front: prevOrientation.upper,
-						upper: prevOrientation.back,
-						down: prevOrientation.front,
-						back: prevOrientation.down,
-					};
-				}
-			});
+			// setOrientation((prevOrientation) => {
+			// 	if (clockwise) {
+			// 		return {
+			// 			...prevOrientation,
+			// 			front: prevOrientation.down,
+			// 			upper: prevOrientation.front,
+			// 			down: prevOrientation.back,
+			// 			back: prevOrientation.upper,
+			// 		};
+			// 	} else {
+			// 		return {
+			// 			...prevOrientation,
+			// 			front: prevOrientation.upper,
+			// 			upper: prevOrientation.back,
+			// 			down: prevOrientation.front,
+			// 			back: prevOrientation.down,
+			// 		};
+			// 	}
+			// });
+			let prevOrientation = orientation;
+			
+			if (clockwise) {
+			orientation =  {
+					...prevOrientation,
+					front: prevOrientation.down,
+					upper: prevOrientation.front,
+					down: prevOrientation.back,
+					back: prevOrientation.upper,
+				};
+			} else {
+			orientation = {
+					...prevOrientation,
+					front: prevOrientation.upper,
+					upper: prevOrientation.back,
+					down: prevOrientation.front,
+					back: prevOrientation.down,
+				};
+			}
 		}
 		/*
 			Dual Layer Rotation Logic Functions:
@@ -334,7 +425,7 @@ function Solver(props) {
 					i--; // Freeing the reserved time
 				}, delay);
 			} else {
-				turnX(clockwise);
+				turnX(clockwise, async);
 			}
 		}
 		// Rotate 2 right faces
@@ -347,7 +438,7 @@ function Solver(props) {
 					i--;
 				}, delay);
 			} else {
-				turnZ(clockwise);
+				turnZ(clockwise, async);
 			}
 		}
 		// Rotate 2 upper faces
@@ -360,7 +451,7 @@ function Solver(props) {
 					i--;
 				}, delay);
 			} else {
-				turnY(clockwise);
+				turnY(clockwise, async);
 			}
 		}
 		// Rotate 2 down faces
@@ -373,7 +464,7 @@ function Solver(props) {
 					i--;
 				}, delay);
 			} else {
-				turnY(!clockwise);
+				turnY(!clockwise, async);
 			}
 		}
 		// Rotate 2 left faces
@@ -386,7 +477,7 @@ function Solver(props) {
 					i--;
 				}, delay);
 			} else {
-				turnZ(!clockwise);
+				turnZ(!clockwise, async);
 			}
 		}
 		// Rotate 2 back faces
@@ -399,7 +490,7 @@ function Solver(props) {
 					i--;
 				}, delay);
 			} else {
-				turnX(!clockwise);
+				turnX(!clockwise, async);
 			}
 		}
 
@@ -423,7 +514,7 @@ function Solver(props) {
 				}, delay);
 			} else {
 				rotateLeft(!clockwise, async);
-				turnZ(!clockwise);
+				turnZ(!clockwise, async);
 			}
 		}
 		// Rotate Y-axis middle layer
@@ -441,7 +532,7 @@ function Solver(props) {
 				}, delay);
 			} else {
 				rotateDown(!clockwise, async);
-				turnY(!clockwise);
+				turnY(!clockwise, async);
 			}
 		}
 		// Rotate X-axis middle layer
@@ -459,7 +550,7 @@ function Solver(props) {
 				}, delay);
 			} else {
 				rotateBack(clockwise, async);
-				turnX(clockwise);
+				turnX(clockwise, async);
 			}
 		}
 		// Convert algorithm's text output into actual animation
