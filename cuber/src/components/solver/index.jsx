@@ -31,6 +31,7 @@ function Solver(props) {
 	// Start reverse and forward algorithm animation after component is mounted
 	useEffect(() => {
 		console.log("Script Started");
+		let cubePivot = document.querySelector("#pivot");
 		let movesNum = document.querySelector(".moves__num");
 		let stepCountBtn = document.querySelector(".step__count");
 		let scrambleError = document.querySelector(".scramble__error");
@@ -38,6 +39,7 @@ function Solver(props) {
 		let repeatBtn = document.querySelector(".repeat__btn");
 		let prevBtn = document.querySelector(".previous__btn");
 		let nextBtn = document.querySelector(".next__move--btn");
+		let replayBtn = document.querySelector(".replay__btn");
 		// Create color array by matching its index with "orientation" value
 		var colors = ["blue", "green", "white", "yellow", "red", "orange"],
 			pieces = document.getElementsByClassName("piece");
@@ -115,39 +117,6 @@ function Solver(props) {
 		}
 
 		// Animates rotation of the face (by clockwise if cw), and then swaps stickers
-		// function animateRotation(face, cw, currentTime, async = true) {
-		// 	var k = 0.3 * ((face % 2) * 2 - 1) * (2 * cw - 1),
-		// 		qubes = Array(9)
-		// 			.fill(pieces[face])
-		// 			.map(function (value, index) {
-		// 				return index
-		// 					? getPieceBy(face, index / 2, index % 2)
-		// 					: value;
-		// 			});
-		// 	(function rotatePieces() {
-		// 		var passed = Date.now() - currentTime,
-		// 			style =
-		// 				"rotate" +
-		// 				getAxis(face) +
-		// 				"(" +
-		// 				k * passed * (passed < 300) +
-		// 				"deg)";
-		// 		qubes.forEach(function (piece) {
-		// 			piece.style.transform = piece.style.transform.replace(
-		// 				/rotate.\(\S+\)/,
-		// 				style
-		// 			);
-		// 		});
-		// 		if (passed >= 300) return swapPieces(face, 3 - 2 * cw);
-		// 		if (async) {
-		// 			// Does smooth animation for forward algo
-		// 			requestAnimationFrame(rotatePieces);
-		// 		} else {
-		// 			// Does fast animation for reverse algo
-		// 			rotatePieces();
-		// 		}
-		// 	})();
-		// }
 		function animateRotation(face, cw, currentTime, async = true) {
 			var k = 0.3 * ((face % 2) * 2 - 1) * (2 * cw - 1),
 				qubes = Array(9)
@@ -197,32 +166,6 @@ function Solver(props) {
 				})();
 			}
 		}
-		// function quickRotation(face, cw, currentTime, async = true)
-		// {
-		// 	var k = 0.3 * ((face % 2) * 2 - 1) * (2 * cw - 1),
-		// 		qubes = Array(9)
-		// 			.fill(pieces[face])
-		// 			.map(function (value, index) {
-		// 				return index
-		// 					? getPieceBy(face, index / 2, index % 2)
-		// 					: value;
-		// 			});
-		// 	(function rotatePieces() {
-		// 		var style =
-		// 				"rotate" +
-		// 				getAxis(face) +
-		// 				"(" +
-		// 				k * passed * (passed < 300) +
-		// 				"deg)";
-		// 		qubes.forEach(function (piece) {
-		// 			piece.style.transform = piece.style.transform.replace(
-		// 				/rotate.\(\S+\)/,
-		// 				style
-		// 			);
-		// 		});
-		// 		swapPieces(face, 3 - 2 * cw);
-		// 	})();
-		// }
 		// Events
 		// function mousedown(md_e) {
 		// 	// Side Rotation Logic
@@ -599,29 +542,6 @@ function Solver(props) {
 			}
 		};
 		// Cube Scramble with Reverse Algorithm Execution
-		// function scramble_cube() {
-		// 	movesNum.classList.remove("active");
-		// 	stepCountBtn.classList.remove("active");
-		// 	// Initially, "Previous", "Repeat" and "Next" are disabled
-		// 	prevBtn.setAttribute("disabled", "");
-		// 	repeatBtn.setAttribute("disabled", "");
-		// 	nextBtn.setAttribute("disabled", "");
-		// 	let async = false; // Scramble should not be smooth
-		// 	// Recursively scramble until reverse algorithm finishes
-		// 	setTimeout(() => {
-		// 		applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
-		// 		if (reverseIndex < props.movesAlgo.reverseAlgo.length - 1) {
-		// 			reverseIndex++;
-		// 			scramble_cube();
-		// 		} else {
-		// 			// Allow user to move to next page
-		// 			movesNum.classList.add("active");
-		// 			nextBtn.removeAttribute("disabled");
-		// 			setMoveMessage(`Orient your cube as shown here to solve.`);
-		// 			return;
-		// 		}
-		// 	}, 10);
-		// }
 		function scramble_cube() {
 			movesNum.classList.remove("active");
 			stepCountBtn.classList.remove("active");
@@ -635,26 +555,12 @@ function Solver(props) {
 				for(reverseIndex = 0; reverseIndex <= props.movesAlgo.reverseAlgo.length - 1; reverseIndex++)
 				{
 					applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
-					
 				}
 				movesNum.classList.add("active");
 				nextBtn.removeAttribute("disabled");
 				setMoveMessage(`Orient your cube as shown here to solve.`);
 
 			}, 1000);
-			// setTimeout(() => {
-			// 	applyMove(props.movesAlgo.reverseAlgo[reverseIndex], async);
-			// 	if (reverseIndex < props.movesAlgo.reverseAlgo.length - 1) {
-			// 		reverseIndex++;
-			// 		scramble_cube();
-			// 	} else {
-			// 		// Allow user to move to next page
-			// 		movesNum.classList.add("active");
-			// 		nextBtn.removeAttribute("disabled");
-			// 		setMoveMessage(`Orient your cube as shown here to solve.`);
-			// 		return;
-			// 	}
-			// }, 10);
 		}
 		scramble_cube();
 		function reScramble()
@@ -687,6 +593,19 @@ function Solver(props) {
 					}
 					// Perform next move animation
 					applyMove(props.movesAlgo.forwardAlgo[forwardIndex], async);
+					// Cube Solved Condition
+					if(forwardIndex == props.movesAlgo.forwardAlgo.length - 1)
+					{
+						nextBtn.setAttribute("disabled", "");
+						setCubeSolved(true);
+						replayBtn.classList.add("active");
+						// Rotate solved cube after 1 second
+						setTimeout(() =>
+						{
+							cubePivot.classList.add("active");
+							setMoveMessage(`CONGRATULATIONS!!! Cube is solved🎉`);
+						}, 1500);
+					}
 					forwardIndex++;
 					// Allow user to goto previous step if atleast 2 moves are done
 					if (forwardIndex >= 2) {
@@ -695,9 +614,9 @@ function Solver(props) {
 						prevBtn.setAttribute("disabled", "");
 					}
 					i--; // Freeing bought Time for next Move
-				} else {
-					console.log("Cube Solved...CONGRATULATIONS!!!");
-					setCubeSolved(true);
+				} 
+				else {
+					console.log("Cube Already Solved...CONGRATULATIONS!!!");
 				}
 			}, delay * i);
 		}
@@ -709,7 +628,7 @@ function Solver(props) {
 			let reverseStepIndex =
 				props.movesAlgo.reverseAlgo.length - forwardIndex;
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
-			forwardIndex--;
+			forwardIndex --;
 			// Re-animate the move smoothly
 			nextMove(repeat);
 		}
@@ -717,22 +636,48 @@ function Solver(props) {
 		function previousMove() {
 			let async = false,
 				repeat = false;
+			// Next Button needs to be enabled
+			nextBtn.removeAttribute("disabled");
+			replayBtn.classList.remove("active");
+			cubePivot.classList.remove("active");
 			// Reverse 2 step moves
 			let reverseStepIndex =
-				props.movesAlgo.reverseAlgo.length - forwardIndex;
+			props.movesAlgo.reverseAlgo.length - forwardIndex;
+			console.log(forwardIndex, reverseStepIndex);
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			reverseStepIndex++;
 			applyMove(props.movesAlgo.reverseAlgo[reverseStepIndex], async);
 			forwardIndex -= 2;
+			// Take the solved state to unsolved
+			setCubeSolved(false);
+			setMoveMessage(`Orient your cube as shown here to solve.`);
 			setStepCount((prevCount) => prevCount - 2); // Decrement step count
 			// Re-animate one move smoothly
 			nextMove(repeat);
+		}
+		function handleKeys(e)
+		{
+			let inputKey = e.key;
+			console.log(inputKey);
+			if(inputKey == "ArrowLeft" && !prevBtn.hasAttribute("disabled"))
+			{
+				previousMove();
+			}
+			else if(inputKey == "ArrowDown" && !repeatBtn.hasAttribute("disabled"))
+			{
+				repeatMove();
+			}
+			else if(inputKey == "ArrowRight" && !nextBtn.hasAttribute("disabled"))
+			{
+				nextMove(false);
+			}
 		}
 		retryBtn.addEventListener("click", reScramble);
 		prevBtn.addEventListener("click", previousMove);
 		nextBtn.addEventListener("click", (e) => nextMove(false));
 		repeatBtn.addEventListener("click", repeatMove);
-		
+		replayBtn.addEventListener("click", (e) => props.handleReplay());
+		window.addEventListener("keydown", handleKeys);
 		return () =>
 		{
 			console.log("Solver Component Unmounted");
@@ -741,6 +686,8 @@ function Solver(props) {
 			reverseIndex = 0;
 			retryBtn.classList.remove("active");
 			scrambleError.classList.remove("active");
+			replayBtn.classList.remove("active");
+			cubePivot.classList.remove("active");
 
 			prevBtn.setAttribute("disabled", "");
 			repeatBtn.setAttribute("disabled", "");
@@ -751,6 +698,8 @@ function Solver(props) {
 			prevBtn.removeEventListener("click", previousMove);
 			nextBtn.removeEventListener("click", (e) => nextMove(false));
 			repeatBtn.removeEventListener("click", repeatMove);
+			replayBtn.removeEventListener("click", (e) => props.handleReplay());
+			window.removeEventListener("keydown", handleKeys);
 		}
 	}, []);
 
@@ -1027,6 +976,9 @@ function Solver(props) {
 			</button>
 			<button className="next__move--btn" disabled>
 				Next
+			</button>
+			<button className="replay__btn">
+				Replay
 			</button>
 		</div>
 	);

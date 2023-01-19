@@ -142,6 +142,7 @@
 .cube__s>.piece__s>.element__s>.sticker__s.orange {
 	background-color: #FF5000;
 	background-color: #d46904;
+	background-color: #eb7d15;
 }
 
 .cube__s>.piece__s>.element__s>.sticker__s.red {
@@ -150,12 +151,12 @@
 }
 #pivot__s 
 {
-	background-color: orange;
+	/* background-color: orange; */
 	/* pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg)`; */
 	transform: rotateX(-35deg) rotateY(-135deg) rotateZ(0deg);
-	border: 2px solid red;
+	/* border: 2px solid red; */
 	/* padding: 10rem; */
-	animation-name: rotate;
+	animation-name: rotate__s;
 	animation-iteration-count: infinite;
 	animation-timing-function: ease-in-out;
 	animation-timing-function:cubic-bezier(0.445, 0.05, 0.55, 0.95);			/* Good*/
@@ -189,7 +190,7 @@
 	background-color: orange;
 	border-radius: 25px;
 } */
-@keyframes rotate
+@keyframes rotate__s
 {
 	0%
 	{

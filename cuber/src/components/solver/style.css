@@ -245,13 +245,14 @@ body {
 .cube>.piece>.element>.sticker.orange {
 	background-color: #FF5000;
 	background-color: #d46904;
+	background-color: #eb7d15;
 }
 
 .cube>.piece>.element>.sticker.red {
 	background-color: #DF0500;
 	background-color: #cd2e19;
 }
-.next__move--btn, .repeat__btn, .previous__btn
+.next__move--btn, .repeat__btn, .previous__btn, .replay__btn
 {
 	height: 40px;
 	width: 150px;
@@ -265,8 +266,11 @@ body {
 	transition: all 0.15s ease-in;
 	position: absolute;
 	bottom: 2rem;
-	right: 3rem;
 	border: 1px solid grey;
+}
+.next__move--btn
+{
+	left: 27rem;
 }
 .repeat__btn
 {
@@ -278,13 +282,52 @@ body {
 	); */
 	background-color: #46C483;
 	background-color: #1D1D20;
-	right: 15rem;
+	left: 15rem;
 }
 .previous__btn
 {
-	right: 27rem;
+	left: 3rem;
 }
-.next__move--btn:hover, .repeat__btn:hover, .previous__btn:hover
+.replay__btn
+{
+	opacity: 0;
+	right: 3rem;
+}
+.replay__btn.active
+{
+	opacity: 1;
+	animation-name: shake;
+	animation-duration: 0.8s;
+	animation-delay: 0.5s;
+	animation-timing-function: ease-out;
+	animation-fill-mode: forwards;
+	animation-iteration-count: infinite;
+}
+@keyframes shake {
+	from {
+		transform: scale(1) rotate(0deg);
+	}
+	20%
+	{
+		transform: scale(1) rotate(0deg);
+	}
+	40% {
+		transform: scale(1) rotate(-20deg);
+	}
+	60%
+	{
+		transform: scale(1) rotate(20deg);
+	}
+	80% {
+
+		transform: scale(1) rotate(0deg);
+	}
+
+	to {
+		transform: scale(1) rotate(0deg);
+	}
+}
+.next__move--btn:hover, .repeat__btn:hover, .previous__btn:hover, .replay__btn
 {
 	cursor: pointer;
 	background-color: rgb(255, 28, 100);
@@ -309,4 +352,39 @@ body {
 	background-color: rgb(169, 169, 169);
 	filter: drop-shadow(0px 10px 10px rgb(209, 209, 209));
 	filter: drop-shadow(0px 10px 10px #489da9);
+}
+#pivot
+{
+	transition: all 0.3s ease-in-out;
+}
+#pivot.active
+{
+	/* background-color: orange; */
+	/* pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg)`; */
+	transform: rotateX(-35deg) rotateY(-135deg) rotateZ(0deg);
+	/* border: 2px solid red; */
+	/* padding: 10rem; */
+	animation-name: rotate;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+	animation-timing-function: linear;
+	animation-duration: 7s;
+	transition: all 0.3s ease-in-out;
+}
+@keyframes rotate
+{
+	0%
+	{
+		transform: rotateX(-35deg) rotateY(-135deg) rotateZ(0deg);
+	}
+	100%
+	{
+		transform: rotateX(325deg) rotateY(225deg) rotateZ(0deg);
+		transform: rotateX(-395deg) rotateY(-495deg) rotateZ(360deg);
+		/* Good */
+		transform: rotateX(325deg) rotateY(225deg) rotateZ(360deg);
+		/* Good */
+		transform: rotateX(-35deg) rotateY(225deg) rotateZ(360deg);
+		transform: rotateX(-35deg) rotateY(585deg) rotateZ(0deg);
+	}
 }

@@ -5,6 +5,7 @@ import Start from "./components/start_page"
 import FaceSet from "./components/face_set"
 import Position from "./components/positioning";
 import Solver from "./components/solver/";
+import { useEffect } from "react";
 
 function App() {
 	// Define default color array for each cube face in a solved state
@@ -15,23 +16,33 @@ function App() {
 	let leftColor = ['orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange'];
 	let backColor = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'];
 	// "inputFaceColors" object wraps-up above "color array" inside it
-	let [inputFaceColors, setInputFaceColor] = useState(
-		{
-			front: frontColor,
-			right: rightColor,
-			upper: upperColor,
-			down: downColor,
-			left: leftColor,
-			back: backColor
-		}
-		);
+	let [inputFaceColors, setInputFaceColor] = useState({});
 	// "algoResult" stores forward and backward algorithm outputs
-	let [algoResult, setAlgoResult] = useState(
-		{
-			forwardAlgo: [],
-			reverseAlgo: []
-		}
+	let [algoResult, setAlgoResult] = useState({});
+	function resetCube()
+	{
+		setInputFaceColor(
+			{
+				front: frontColor,
+				right: rightColor,
+				upper: upperColor,
+				down: downColor,
+				left: leftColor,
+				back: backColor
+			}
 		);
+		setAlgoResult(
+			{
+				forwardAlgo: [],
+				reverseAlgo: []
+			}
+		);
+	}
+	// Set Cube Parameters only once at first
+	useEffect(() =>
+	{
+		resetCube();
+	}, []);
 	/* There are 5 pages in the app and only one page should be visible at once.
 	So, "pageVisibility" array says which page to show at a time.
 	Initially, only 1st page is "true" (Visible) */
@@ -140,6 +151,14 @@ function App() {
 	{
 		console.log("Solver Ran");
 	}
+	function replayApp()
+	{
+		// Reset cube parameters
+		resetCube();
+		// Takes user to starting page
+		setPageVisibility([true, false, false, false, false]);
+		console.log("App Restarted");
+	}
 	// Update "algoResult" according to generated steps for solving cube
 	function handleAlgoResult(algo)
 	{
@@ -156,7 +175,7 @@ function App() {
 				{pageVisibility[0] && <Start handleClick={handleStart}/>}
 				{pageVisibility[1] && <Position handleClick={handlePosition} />}
 				{pageVisibility[2] && <FaceSet handleClick={handleFaceInput} handleChange={handleFaceSet} colors={inputFaceColors} setAlgo={(algo) => handleAlgoResult(algo)} cubeColorState={inputFaceColors}/>}
-				{pageVisibility[3] && <Solver handleClick={handleSolver} movesAlgo={algoResult}/>}
+				{pageVisibility[3] && <Solver handleClick={handleSolver} movesAlgo={algoResult } handleReplay={replayApp}/> }
 			</div>
 		</div>
 	);
