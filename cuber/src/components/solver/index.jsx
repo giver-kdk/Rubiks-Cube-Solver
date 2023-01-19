@@ -19,14 +19,6 @@ function Solver(props) {
 		"Syncing the cube state with yours...🪄"
 	);
 	// Orientaion is denoted by integers. If cube orientation changes, integer value is updated
-	// let [orientation, setOrientation] = useState({
-	// 	front: 1,
-	// 	right: 4,
-	// 	upper: 2,
-	// 	down: 3,
-	// 	left: 5,
-	// 	back: 0,
-	// });
 	let orientation =
 	{
 		front: 1,
@@ -266,25 +258,6 @@ function Solver(props) {
 			}
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg) rotate3d(1,0,0,${startX}deg)`;
 			// Orientation is changed. So, update "orientation" value
-			// setOrientation((prevOrientation) => {
-			// 	if (clockwise) {
-			// 		return {
-			// 			...prevOrientation,
-			// 			right: prevOrientation.upper,
-			// 			upper: prevOrientation.left,
-			// 			down: prevOrientation.right,
-			// 			left: prevOrientation.down,
-			// 		};
-			// 	} else {
-			// 		return {
-			// 			...prevOrientation,
-			// 			right: prevOrientation.down,
-			// 			upper: prevOrientation.right,
-			// 			down: prevOrientation.left,
-			// 			left: prevOrientation.upper,
-			// 		};
-			// 	}
-			// });
 			let prevOrientation = orientation;
 			
 			if (clockwise) {
@@ -319,25 +292,6 @@ function Solver(props) {
 				pivot.style.transition = "all 0s ease-in-out";
 			}
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg)`;
-			// setOrientation((prevOrientation) => {
-			// 	if (clockwise) {
-			// 		return {
-			// 			...prevOrientation,
-			// 			front: prevOrientation.right,
-			// 			right: prevOrientation.back,
-			// 			left: prevOrientation.front,
-			// 			back: prevOrientation.left,
-			// 		};
-			// 	} else {
-			// 		return {
-			// 			...prevOrientation,
-			// 			front: prevOrientation.left,
-			// 			right: prevOrientation.front,
-			// 			left: prevOrientation.back,
-			// 			back: prevOrientation.right,
-			// 		};
-			// 	}
-			// });
 			let prevOrientation = orientation;
 			
 			if (clockwise) {
@@ -371,25 +325,6 @@ function Solver(props) {
 				pivot.style.transition = "all 0s ease-in-out";
 			}
 			pivot.style.transform = `rotateX(${startXYZ[0]}deg) rotateY(${startXYZ[1]}deg) rotateZ(${startXYZ[2]}deg)`;
-			// setOrientation((prevOrientation) => {
-			// 	if (clockwise) {
-			// 		return {
-			// 			...prevOrientation,
-			// 			front: prevOrientation.down,
-			// 			upper: prevOrientation.front,
-			// 			down: prevOrientation.back,
-			// 			back: prevOrientation.upper,
-			// 		};
-			// 	} else {
-			// 		return {
-			// 			...prevOrientation,
-			// 			front: prevOrientation.upper,
-			// 			upper: prevOrientation.back,
-			// 			down: prevOrientation.front,
-			// 			back: prevOrientation.down,
-			// 		};
-			// 	}
-			// });
 			let prevOrientation = orientation;
 			
 			if (clockwise) {
